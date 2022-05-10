@@ -77,6 +77,7 @@ void HAL_MspInit(void)
   /* Peripheral interrupt init */
   /* HSEM2_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(HSEM2_IRQn, 10, 0);
+  /* HSEM2_IRQn interrupt configuration */
   HAL_NVIC_EnableIRQ(HSEM2_IRQn);
 
   /* USER CODE BEGIN MspInit 1 */
@@ -99,6 +100,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
   /* USER CODE BEGIN I2C1_MspInit 0 */
 
   /* USER CODE END I2C1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
@@ -228,6 +230,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN USART1_MspInit 0 */
 
   /* USER CODE END USART1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
@@ -337,5 +340,3 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

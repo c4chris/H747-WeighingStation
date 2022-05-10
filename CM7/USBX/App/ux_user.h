@@ -24,7 +24,7 @@
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */
 /*                                                                        */
 /*    ux_user.h                                           PORTABLE C      */
-/*                                                           6.0          */
+/*                                                           6.1.9.       */
 /*                                                                        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -43,7 +43,29 @@
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
 /*  05-19-2020     Chaoqiong Xiao           Initial Version 6.0           */
-/*                                                                        */
+/*  09-30-2020     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            resulting in version 6.1    */
+/*  02-02-2021     Xiuwen Cai               Modified comment(s), added    */
+/*                                            compile option for using    */
+/*                                            packet pool from NetX,      */
+/*                                            resulting in version 6.1.4  */
+/*  04-02-2021     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            added DFU_UPLOAD option,    */
+/*                                            added macro to enable       */
+/*                                            device bi-dir-endpoints,    */
+/*                                            added macro to disable CDC- */
+/*                                            ACM transmission support,   */
+/*                                            resulting in version 6.1.6  */
+/*  06-02-2021     Xiuwen Cai               Modified comment(s), added    */
+/*                                            transfer timeout value      */
+/*                                            options,                    */
+/*                                            resulting in version 6.1.7  */
+/*  08-02-2021     Wen Wang                 Modified comment(s),          */
+/*                                            fixed spelling error,       */
+/*                                            resulting in version 6.1.8  */
+/*  10-15-2021     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            added option for assert,    */
+/*                                            resulting in version 6.1.9  */
 /**************************************************************************/
 
 #ifndef UX_USER_H
@@ -89,7 +111,8 @@
 
 /* Defined, this value is the maximum number of classes in the device stack that can be loaded by
    USBX.  */
-/* #define UX_MAX_SLAVE_CLASS_DRIVER    1 */
+
+#define UX_MAX_SLAVE_CLASS_DRIVER                         1
 
 /* Defined, this value is the maximum number of interfaces in the device framework.  */
 
@@ -250,6 +273,38 @@
 
 /* #define UX_DEVICE_CLASS_HID_MAX_EVENTS_QUEUE                                           8 */
 
+/* Defined, this macro will disable DFU_UPLOAD support.  */
+
+/* #define UX_DEVICE_CLASS_DFU_UPLOAD_DISABLE  */
+
+/* Defined, this macro will enable DFU_GETSTATUS and DFU_GETSTATE in dfuERROR.  */
+
+/* #define UX_DEVICE_CLASS_DFU_ERROR_GET_ENABLE  */
+
+/* Defined, this macro will change status mode.
+   0 - simple mode,
+       status is queried from application in dfuDNLOAD-SYNC and dfuMANIFEST-SYNC state,
+       no bwPollTimeout.
+   1 - status is queried from application once requested,
+       b0-3 : media status
+       b4-7 : bStatus
+       b8-31: bwPollTimeout
+       bwPollTimeout supported.
+*/
+
+#define UX_DEVICE_CLASS_DFU_STATUS_MODE                  1
+
+/* Defined, this value represents the default DFU status bwPollTimeout.
+   The value is 3 bytes long (max 0xFFFFFFu).
+   By default the bwPollTimeout is 1 (means 1ms).
+ */
+
+#define UX_DEVICE_CLASS_DFU_STATUS_POLLTIMEOUT             0
+
+/* Defined, this macro will enable custom request process callback.  */
+
+/* #define UX_DEVICE_CLASS_DFU_CUSTOM_REQUEST_ENABLE  */
+
 /* Defined, this value will only enable the host side of usbx.  */
 
 #define UX_HOST_SIDE_ONLY
@@ -304,13 +359,20 @@
 
 /* #define UX_MAX_DEVICE_INTERFACES             6 */
 
-/* Define USBX max root hub port (1 ~ n).  */
-
-/* #define UX_MAX_ROOTHUB_PORT             4 */
-
 /* Define USBX max TT. */
 
 /* #define UX_MAX_TT             8 */
 
+/* Determine if tracing is enabled.  */
+
+/*#define UX_TRACE_INSERT_MACROS*/
+
+/* Defined, this macro enables device bi-directional endpoint support. */
+
+/* #define UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT */
+
+/* Defined, this macro disables CDC ACM non-blocking transmission support. */
+
+/* #define UX_DEVICE_CLASS_CDC_ACM_TRANSMISSION_DISABLE */
 #endif
 

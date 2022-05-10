@@ -1,4 +1,3 @@
-
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -42,9 +41,9 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 /* Using static memory allocation via threadX Byte memory pools */
 
-#define USE_MEMORY_POOL_ALLOCATION               1
+#define USE_STATIC_ALLOCATION                    1
 
-#define TX_APP_MEM_POOL_SIZE                     5 * 1024
+#define TX_APP_MEM_POOL_SIZE                     (5 * 1024)
 
 /* USER CODE BEGIN EC */
 
@@ -70,5 +69,3 @@ extern "C" {
 #endif
 
 #endif /* APP_AZURE_RTOS_CONFIG_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

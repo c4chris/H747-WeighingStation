@@ -74,6 +74,7 @@ void HAL_MspInit(void)
   /* Peripheral interrupt init */
   /* HSEM1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(HSEM1_IRQn, 10, 0);
+  /* HSEM1_IRQn interrupt configuration */
   HAL_NVIC_EnableIRQ(HSEM1_IRQn);
 
   /* USER CODE BEGIN MspInit 1 */
@@ -145,6 +146,7 @@ void HAL_DSI_MspInit(DSI_HandleTypeDef* hdsi)
   /* USER CODE BEGIN DSI_MspInit 0 */
 
   /* USER CODE END DSI_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_DSI;
@@ -205,6 +207,7 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* hltdc)
   /* USER CODE BEGIN LTDC_MspInit 0 */
 
   /* USER CODE END LTDC_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
@@ -277,6 +280,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
   /* USER CODE BEGIN USB_OTG_HS_MspInit 0 */
 
   /* USER CODE END USB_OTG_HS_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
@@ -285,6 +289,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     {
       Error_Handler();
     }
+
   /** Enable USB Voltage detector
   */
     HAL_PWREx_EnableUSBVoltageDetector();
@@ -674,5 +679,3 @@ void HAL_SDRAM_MspDeInit(SDRAM_HandleTypeDef* hsdram){
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

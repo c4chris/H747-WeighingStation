@@ -50,8 +50,6 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
-extern TX_EVENT_FLAGS_GROUP cm7_event_group;
-
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -70,7 +68,7 @@ extern TX_EVENT_FLAGS_GROUP cm7_event_group;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-UINT App_USBX_Host_Init(VOID *memory_ptr);
+UINT MX_USBX_Host_Init(VOID *memory_ptr);
 
 /* USER CODE BEGIN EFP */
 UINT  MX_USB_Host_Init(void);
@@ -85,9 +83,6 @@ UINT  ux_host_event_callback(ULONG event, UX_HOST_CLASS *p_host_class, VOID *p_i
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
-#define LCD_FRAME_BUFFER        LCD_LAYER_0_ADDRESS
-#define CLOCK_TIMER             0x01
 
 /* USER CODE END PD */
 
@@ -126,5 +121,3 @@ typedef struct
 }
 #endif
 #endif /* __APP_USBX_HOST_H__ */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

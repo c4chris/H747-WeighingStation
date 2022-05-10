@@ -34,7 +34,7 @@
 /*  FUNCTION                                               RELEASE        */ 
 /*                                                                        */ 
 /*    _ux_host_stack_device_configuration_select          PORTABLE C      */ 
-/*                                                           6.1          */
+/*                                                           6.1.10       */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Chaoqiong Xiao, Microsoft Corporation                               */
@@ -78,6 +78,13 @@
 /*                                            optimized based on compile  */
 /*                                            definitions,                */
 /*                                            resulting in version 6.1    */
+/*  02-02-2021     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            used pointer for current    */
+/*                                            selected configuration,     */
+/*                                            resulting in version 6.1.4  */
+/*  01-31-2022     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            refine power usage check,   */
+/*                                            resulting in version 6.1.10 */
 /*                                                                        */
 /**************************************************************************/
 UINT  _ux_host_stack_device_configuration_select(UX_CONFIGURATION *configuration)
@@ -106,42 +113,34 @@ UINT                    status;
     /* If trace is enabled, insert this event into the trace buffer.  */
     UX_TRACE_IN_LINE_INSERT(UX_TRACE_HOST_STACK_DEVICE_CONFIGURATION_SELECT, device, configuration, 0, 0, UX_TRACE_HOST_STACK_EVENTS, 0, 0)
 
+    /* We need to check the amount of power the bus powered device is consuming
+       before switch configuration. Otherwise we may run the risk of
+       an over current fault. */
+    if (((configuration -> ux_configuration_descriptor.bmAttributes & UX_CONFIGURATION_DEVICE_SELF_POWERED) == 0) &&
+         (configuration -> ux_configuration_descriptor.MaxPower > UX_DEVICE_MAX_POWER_GET(device)))
+    {
+
+        /* Error trap. */
+        _ux_system_error_handler(UX_SYSTEM_LEVEL_THREAD, UX_SYSTEM_CONTEXT_ENUMERATOR, UX_OVER_CURRENT_CONDITION);
+
+        /* If trace is enabled, insert this event into the trace buffer.  */
+        UX_TRACE_IN_LINE_INSERT(UX_TRACE_ERROR, UX_OVER_CURRENT_CONDITION, configuration, 0, 0, UX_TRACE_ERRORS, 0, 0)
+
+        return(UX_OVER_CURRENT_CONDITION);
+    }
+
     /* Check for the state of the device . If the device is already configured, 
        we need to cancel the existing configuration before enabling this one.   */
     if (device -> ux_device_state == UX_DEVICE_CONFIGURED)
     {
 
         /* The device is configured. Get the first configuration pointer.  */
-        current_configuration =  device -> ux_device_first_configuration;
-
-        /* Traverse the configuration list until we find the right one. */
-        while (current_configuration -> ux_configuration_descriptor.bConfigurationValue !=
-                device -> ux_device_current_configuration)
-        {
-
-            current_configuration =  current_configuration -> ux_configuration_next_configuration;
-        }
+        current_configuration =  device -> ux_device_current_configuration;
 
         /* Deselect this instance */
         _ux_host_stack_configuration_instance_delete(current_configuration);
     }
 
-    /* The device is now in the unconfigured state. We need to deal
-       with the amount of power the device is consuming before allowing
-       it to be configured. Otherwise we may run the risk of an over
-       current fault. */        
-    if (configuration -> ux_configuration_descriptor.MaxPower > UX_DEVICE_MAX_POWER_GET(device))
-    {
-    
-        /* Error trap. */
-        _ux_system_error_handler(UX_SYSTEM_LEVEL_THREAD, UX_SYSTEM_CONTEXT_ENUMERATOR, UX_OVER_CURRENT_CONDITION);
-
-        /* If trace is enabled, insert this event into the trace buffer.  */
-        UX_TRACE_IN_LINE_INSERT(UX_TRACE_ERROR, UX_OVER_CURRENT_CONDITION, configuration, 0, 0, UX_TRACE_ERRORS, 0, 0)
-    
-        return(UX_OVER_CURRENT_CONDITION);
-    }
-        
     /* The device can now be configured.  */
     status =  _ux_host_stack_configuration_set(configuration);
     if (status != UX_SUCCESS)

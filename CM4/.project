@@ -425,16 +425,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_semaphore_put_notify.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_context_restore.S</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m4/gnu/src/tx_thread_context_restore.S</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_context_save.S</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m4/gnu/src/tx_thread_context_save.S</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_create.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_thread_create.c</locationURI>
@@ -463,11 +453,6 @@
 			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_initialize.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_thread_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_interrupt_control.S</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m4/gnu/src/tx_thread_interrupt_control.S</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_preemption_change.c</name>
@@ -543,11 +528,6 @@
 			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_system_resume.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_thread_system_resume.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_system_return.S</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m4/gnu/src/tx_thread_system_return.S</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/ThreadX/RTOS/ThreadX/Core/tx_thread_system_suspend.c</name>

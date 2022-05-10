@@ -26,7 +26,7 @@
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */ 
 /*                                                                        */ 
 /*    ux_user.h                                           PORTABLE C      */ 
-/*                                                           6.1          */
+/*                                                           6.1.10       */
 /*                                                                        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -47,6 +47,37 @@
 /*  05-19-2020     Chaoqiong Xiao           Initial Version 6.0           */
 /*  09-30-2020     Chaoqiong Xiao           Modified comment(s),          */
 /*                                            resulting in version 6.1    */
+/*  02-02-2021     Xiuwen Cai               Modified comment(s), added    */
+/*                                            compile option for using    */
+/*                                            packet pool from NetX,      */
+/*                                            resulting in version 6.1.4  */
+/*  04-02-2021     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            added DFU_UPLOAD option,    */
+/*                                            added macro to enable       */
+/*                                            device bi-dir-endpoints,    */
+/*                                            added macro to disable CDC- */
+/*                                            ACM transmission support,   */
+/*                                            resulting in version 6.1.6  */
+/*  06-02-2021     Xiuwen Cai               Modified comment(s), added    */
+/*                                            transfer timeout value      */
+/*                                            options,                    */
+/*                                            resulting in version 6.1.7  */
+/*  08-02-2021     Wen Wang                 Modified comment(s),          */
+/*                                            fixed spelling error,       */
+/*                                            resulting in version 6.1.8  */
+/*  10-15-2021     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            added option for assert,    */
+/*                                            resulting in version 6.1.9  */
+/*  01-31-2022     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            added standalone support,   */
+/*                                            added option for device     */
+/*                                            audio feedback endpoint,    */
+/*                                            added option for MTP,       */
+/*                                            added options for HID       */
+/*                                            interrupt OUT support,      */
+/*                                            added option to validate    */
+/*                                            class code in enumeration,  */
+/*                                            resulting in version 6.1.10 */
 /*                                                                        */
 /**************************************************************************/
 
@@ -84,6 +115,19 @@
 /* #define UX_PERIODIC_RATE 1000
 */
 #define UX_PERIODIC_RATE (TX_TIMER_TICKS_PER_SECOND)
+
+/* Define control transfer timeout value in millisecond.
+   The default is 10000 milliseconds.  */
+/*
+#define UX_CONTROL_TRANSFER_TIMEOUT                         10000
+*/
+
+/* Define non control transfer timeout value in millisecond.
+   The default is 50000 milliseconds.  */
+/*
+#define UX_NON_CONTROL_TRANSFER_TIMEOUT                     50000
+*/
+
 
 /* Defined, this value is the maximum number of classes that can be loaded by USBX. This value
    represents the class container and not the number of instances of a class. For instance, if a
@@ -140,7 +184,7 @@
 
 
 /* Defined, this value represents the maximum number of bytes received on a control endpoint in
-   the device stack. The default is 256 bytes but can be reduced in memory constraint environments.  */
+   the device stack. The default is 256 bytes but can be reduced in memory constrained environments.  */
 
 /* #define UX_SLAVE_REQUEST_CONTROL_MAX_LENGTH 256
 */
@@ -148,7 +192,7 @@
 
 /* Defined, this value represents the maximum number of bytes that can be received or transmitted
    on any endpoint. This value cannot be less than the maximum packet size of any endpoint. The default 
-   is 4096 bytes but can be reduced in memory constraint environments. For cd-rom support in the storage 
+   is 4096 bytes but can be reduced in memory constrained environments. For cd-rom support in the storage 
    class, this value cannot be less than 2048.  */
 
 #define UX_SLAVE_REQUEST_DATA_MAX_LENGTH    (1024 * 2)
@@ -161,7 +205,7 @@
 
 
 /* Defined, this value represents the maximum number of bytes that a storage payload can send/receive.
-   The default is 8K bytes but can be reduced in memory constraint environments.  */
+   The default is 8K bytes but can be reduced in memory constrained environments.  */
 #define UX_HOST_CLASS_STORAGE_MEMORY_BUFFER_SIZE            (1024 * 8)
 
 /* Define USBX Mass Storage Thread Stack Size. The default is to use UX_THREAD_STACK_SIZE. */
@@ -170,7 +214,7 @@
  */
 
 /* Defined, this value represents the maximum number of Ed, regular TDs and Isochronous TDs. These values
-   depend on the type of host controller and can be reduced in memory constraint environments.  */
+   depend on the type of host controller and can be reduced in memory constrained environments.  */
 
 #define UX_MAX_ED                                           80
 #define UX_MAX_TD                                           128
@@ -222,7 +266,7 @@
 
 
 /* Defined, this value represents the maximum number of media for the host storage class. 
-   Default is 8 but for memory contrained resource systems this can ne reduced to 1. */
+   Default is 8 but for memory constrained resource systems this can ne reduced to 1. */
 
 #define UX_HOST_CLASS_STORAGE_MAX_MEDIA                     2
 
@@ -234,7 +278,7 @@
 
 /* #define UX_HOST_CLASS_STORAGE_INCLUDE_LEGACY_PROTOCOL_SUPPORT */
 
-/* Defined, this value forces the memory allocation scheme to enforce alignement
+/* Defined, this value forces the memory allocation scheme to enforce alignment
    of memory with the UX_SAFE_ALIGN field.
 */
 
@@ -260,6 +304,17 @@
 /* #define UX_HOST_CLASS_CDC_ECM_PACKET_POOL_WAIT           10 */
 
 /* Defined, this value represents the number of milliseconds to wait for packet
+   pool availability checking loop.
+   The default is 100 milliseconds.
+*/
+
+/* #define UX_HOST_CLASS_CDC_ECM_PACKET_POOL_INSTANCE_WAIT  10 */
+
+/* Defined, this enables CDC ECM class to use the packet pool from NetX instance.  */
+
+/* #define UX_HOST_CLASS_CDC_ECM_USE_PACKET_POOL_FROM_NETX */
+
+/* Defined, this value represents the number of milliseconds to wait for packet
    allocation until invoking the application's error callback and retrying.
 */
 
@@ -276,6 +331,76 @@
  */
 
 /* #define UX_DEVICE_CLASS_HID_MAX_EVENTS_QUEUE             8  */
+
+
+/* Defined, this macro will disable DFU_UPLOAD support.  */
+
+/* #define UX_DEVICE_CLASS_DFU_UPLOAD_DISABLE  */
+
+/* Defined, this macro will enable DFU_GETSTATUS and DFU_GETSTATE in dfuERROR.  */
+
+/* #define UX_DEVICE_CLASS_DFU_ERROR_GET_ENABLE  */
+
+/* Defined, this macro will change status mode.
+   0 - simple mode,
+       status is queried from application in dfuDNLOAD-SYNC and dfuMANIFEST-SYNC state,
+       no bwPollTimeout.
+   1 - status is queried from application once requested,
+       b0-3 : media status
+       b4-7 : bStatus
+       b8-31: bwPollTimeout
+       bwPollTimeout supported.
+*/
+
+/* #define UX_DEVICE_CLASS_DFU_STATUS_MODE                  (1)  */
+
+/* Defined, this value represents the default DFU status bwPollTimeout.
+   The value is 3 bytes long (max 0xFFFFFFu).
+   By default the bwPollTimeout is 1 (means 1ms).
+ */
+
+/* #define UX_DEVICE_CLASS_DFU_STATUS_POLLTIMEOUT           (1)  */
+
+/* Defined, this macro will enable custom request process callback.  */
+
+/* #define UX_DEVICE_CLASS_DFU_CUSTOM_REQUEST_ENABLE   */
+
+/* Defined, this macro disables CDC ACM non-blocking transmission support.  */
+
+/* #define UX_DEVICE_CLASS_CDC_ACM_TRANSMISSION_DISABLE  */
+
+/* defined, this macro enables device audio feedback endpoint support.  */
+
+/* #define UX_DEVICE_CLASS_AUDIO_FEEDBACK_SUPPORT  */
+
+/* Defined, device HID interrupt OUT transfer is supported.  */
+
+/* #define UX_DEVICE_CLASS_HID_INTERRUPT_OUT_SUPPORT  */
+
+/* Defined, this macro enables device bi-directional-endpoint support.  */
+
+/* #define UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT  */
+
+/* Defined, this macro enables device/host PIMA MTP support.  */
+
+/* #define UX_PIMA_WITH_MTP_SUPPORT  */
+
+/* Defined, this macro enables host device class code validation.
+   Only following USB-IF allowed device class code is allowed:
+   0x00, 0x02 (CDC Control), 0x09 (Hub), 0x11 (Billboard), 0xDC (Diagnostic), 0xEF (MISC), 0xFF (Vendor)
+   Refer to https://www.usb.org/defined-class-codes for more details.
+ */
+
+/* #define UX_HOST_DEVICE_CLASS_CODE_VALIDATION_ENABLE  */
+
+/* Defined, host HID interrupt OUT transfer is supported.  */
+
+/* #define UX_HOST_CLASS_HID_INTERRUPT_OUT_SUPPORT  */
+
+/* Define HID report transfer timeout value in millisecond.
+   The default is 10000 milliseconds.  */
+
+/* #define UX_HOST_CLASS_HID_REPORT_TRANSFER_TIMEOUT               10000 */
 
 /* Defined, this value will only enable the host side of usbx.  */
 /* #define UX_HOST_SIDE_ONLY   */
@@ -294,7 +419,23 @@
 #endif 
 #endif 
 
-/* Defined, this value represents the maximum size of single tansfers for the SCSI data phase.
+/* Defined, this macro will enable the standalone mode of usbx.  */
+/* #define UX_STANDALONE  */
+
+/* Defined, this macro will remove the FileX dependency of host storage.
+   In this mode, sector access is offered instead of directly FileX FX_MEDIA support.
+   Use following APIs for media obtain and access:
+   - ux_host_class_storage_media_get : get instance of UX_HOST_CLASS_STORAGE_MEDIA
+   - ux_host_class_storage_media_lock : lock specific media for further read/write
+   - ux_host_class_storage_media_read : read sectors on locked media
+   - ux_host_class_storage_media_write : write sectors on locked media
+   - ux_host_class_storage_media_unlock : unlock media
+   Note it's forced defined/enabled in standalone mode of usbx.
+*/
+/* #define UX_HOST_CLASS_STORAGE_NO_FILEX  */
+
+/* Defined, this value represents the maximum size of single transfers for the SCSI data phase.
+   By default it's 1024.
 */
 
 #define UX_HOST_CLASS_STORAGE_MAX_TRANSFER_SIZE             (1024 * 1)
@@ -302,6 +443,37 @@
 /* Defined, this value represents the size of the log pool.
 */
 #define UX_DEBUG_LOG_SIZE                                   (1024 * 16)
+
+/* Defined, this macro represents the non-blocking function to return time tick.
+   This macro is used only in standalone mode.
+   The tick rate is defined by UX_PERIODIC_RATE.
+   If it's not defined, or TX is not included, a external function must be
+   implement in application:
+      extern  ULONG       _ux_utility_time_get(VOID);
+*/
+/* #define _ux_utility_time_get() tx_time_get()  */
+
+/* Defined, this macro represents the non-blocking function to disable interrupts
+   and return old interrupt setting flags.
+   If it's not defined, or TX is not included, a external function must be
+   implement in application:
+      extern ALIGN_TYPE   _ux_utility_interrupt_disable(VOID);
+*/
+/* #define _ux_utility_interrupt_disable() _tx_thread_interrupt_disable()  */
+
+/* Defined, this macro represents the non-blocking function to restore interrupts.
+   If it's not defined, or TX is not included, a external function must be
+   implement in application:
+      extern VOID         _ux_utility_interrupt_restore(ALIGN_TYPE);
+*/
+/* #define _ux_utility_interrupt_restore(flags) _tx_thread_interrupt_restore(flags)  */
+
+/* Defined, this enables the assert checks inside usbx.  */
+#define UX_ENABLE_ASSERT
+
+/* Defined, this defines the assert action taken when failure detected. By default
+   it halts without any output.  */
+/* #define UX_ASSERT_FAIL  for (;;) {tx_thread_sleep(UX_WAIT_FOREVER); }  */
 
 
 /* DEBUG includes and macros for a specific platform go here.  */

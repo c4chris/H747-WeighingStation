@@ -34,7 +34,7 @@
 /*  FUNCTION                                               RELEASE        */ 
 /*                                                                        */ 
 /*    _ux_host_stack_endpoint_instance_delete             PORTABLE C      */ 
-/*                                                           6.1          */
+/*                                                           6.1.10       */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Chaoqiong Xiao, Microsoft Corporation                               */
@@ -72,6 +72,12 @@
 /*                                            optimized based on compile  */
 /*                                            definitions,                */
 /*                                            resulting in version 6.1    */
+/*  06-02-2021     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            fixed trace enabled error,  */
+/*                                            resulting in version 6.1.7  */
+/*  01-31-2022     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            added standalone support,   */
+/*                                            resulting in version 6.1.10 */
 /*                                                                        */
 /**************************************************************************/
 VOID  _ux_host_stack_endpoint_instance_delete(UX_ENDPOINT *endpoint)
@@ -84,7 +90,7 @@ UX_HCD          *hcd;
     hcd = UX_DEVICE_HCD_GET(endpoint -> ux_endpoint_device);
 
     /* If trace is enabled, insert this event into the trace buffer.  */
-    UX_TRACE_IN_LINE_INSERT(UX_TRACE_HOST_STACK_ENDPOINT_INSTANCE_DELETE, device, endpoint, 0, 0, UX_TRACE_HOST_STACK_EVENTS, 0, 0)
+    UX_TRACE_IN_LINE_INSERT(UX_TRACE_HOST_STACK_ENDPOINT_INSTANCE_DELETE, endpoint -> ux_endpoint_device, endpoint, 0, 0, UX_TRACE_HOST_STACK_EVENTS, 0, 0)
     
     /* Ensure the endpoint had its physical ED allocated.  */
     if (endpoint -> ux_endpoint_ed != UX_NULL)
@@ -94,7 +100,7 @@ UX_HCD          *hcd;
         hcd -> ux_hcd_entry_function(hcd, UX_HCD_DESTROY_ENDPOINT, (VOID *) endpoint);
     
         /* Free the semaphore previously attached to the transfer_request of this endpoint.  */
-        _ux_utility_semaphore_delete(&endpoint -> ux_endpoint_transfer_request.ux_transfer_request_semaphore);
+        _ux_host_semaphore_delete(&endpoint -> ux_endpoint_transfer_request.ux_transfer_request_semaphore);
     }
 
     /* If the endpoint requested guaranteed bandwidth, free it now.  */
