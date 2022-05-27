@@ -353,6 +353,8 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
     __HAL_RCC_USB_OTG_HS_ULPI_CLK_ENABLE();
     /* USB_OTG_HS interrupt Init */
+    HAL_NVIC_SetPriority(OTG_HS_EP1_OUT_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(OTG_HS_EP1_OUT_IRQn);
     HAL_NVIC_SetPriority(OTG_HS_EP1_IN_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(OTG_HS_EP1_IN_IRQn);
     HAL_NVIC_SetPriority(OTG_HS_IRQn, 0, 0);
@@ -407,6 +409,7 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hhcd)
     HAL_GPIO_DeInit(GPIOA, ULPI_CK_Pin|ULPI_D0_Pin);
 
     /* USB_OTG_HS interrupt DeInit */
+    HAL_NVIC_DisableIRQ(OTG_HS_EP1_OUT_IRQn);
     HAL_NVIC_DisableIRQ(OTG_HS_EP1_IN_IRQn);
     HAL_NVIC_DisableIRQ(OTG_HS_IRQn);
   /* USER CODE BEGIN USB_OTG_HS_MspDeInit 1 */
@@ -552,6 +555,9 @@ static void HAL_FMC_MspInit(void){
   GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
+  /* Peripheral interrupt init */
+  HAL_NVIC_SetPriority(FMC_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(FMC_IRQn);
   /* USER CODE BEGIN FMC_MspInit 1 */
 
   /* USER CODE END FMC_MspInit 1 */
@@ -661,6 +667,8 @@ static void HAL_FMC_MspDeInit(void){
                           |FMC_A5_Pin|FMC_A4_Pin|FMC_A7_Pin|FMC_A8_Pin
                           |FMC_A6_Pin|FMC_A9_Pin|FMC_SDRAS_Pin);
 
+  /* Peripheral interrupt DeInit */
+  HAL_NVIC_DisableIRQ(FMC_IRQn);
   /* USER CODE BEGIN FMC_MspDeInit 1 */
 
   /* USER CODE END FMC_MspDeInit 1 */

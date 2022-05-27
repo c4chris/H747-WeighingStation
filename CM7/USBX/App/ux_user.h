@@ -124,7 +124,7 @@
    If for instance there are two instances of OHCI running, or one EHCI and one OHCI controller
    running, the UX_MAX_HCD should be set to 2.  */
 
-/* #define UX_MAX_HCD  1 */
+#define UX_MAX_HCD                                       2
 
 /* Defined, this value represents the maximum number of devices that can be attached to the USB.
    Normally, the theoretical maximum number on a single USB is 127 devices. This value can be

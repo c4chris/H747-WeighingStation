@@ -61,6 +61,8 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+void my_Delay(uint32_t);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -218,7 +220,11 @@ void Error_Handler(void);
 #define FMC_D13_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
-#define LCD_LAYER_0_ADDRESS  0xD0000000
+#define SDRAM_BANK_0                0xD0000000UL
+#define SDRAM_BANK_1                0xD0800000UL
+#define SDRAM_BANK_2                0xD1000000UL
+#define SDRAM_BANK_3                0xD1800000UL
+#define LCD_LAYER_0_ADDRESS         SDRAM_BANK_0
 
 /* USER CODE END Private defines */
 

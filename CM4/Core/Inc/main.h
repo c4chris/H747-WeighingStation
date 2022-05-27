@@ -59,6 +59,8 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+void my_Delay(uint32_t);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -105,6 +107,11 @@ void Error_Handler(void);
 #define I2Cx_TIMEOUT_MAX               0x3000 /* The value of the maximal timeout for I2C waiting loops */
 
 /* USER CODE END Private defines */
+
+#define SDRAM_BANK_0                0xD0000000UL
+#define SDRAM_BANK_1                0xD0800000UL
+#define SDRAM_BANK_2                0xD1000000UL
+#define SDRAM_BANK_3                0xD1800000UL
 
 #ifdef __cplusplus
 }
