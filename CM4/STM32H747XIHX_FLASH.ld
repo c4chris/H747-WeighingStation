@@ -36,7 +36,7 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = 0x10048000;    /* end of RAM */
+_estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x200 ;      /* required amount of heap  */
 _Min_Stack_Size = 0x400 ; /* required amount of stack */
@@ -45,23 +45,25 @@ _Min_Stack_Size = 0x400 ; /* required amount of stack */
 MEMORY
 {
   FLASH (rx)      : ORIGIN = 0x08100000, LENGTH = 1024K
-  RAM   (xrw)     : ORIGIN = 0x10000000, LENGTH =  256K    /* SRAM1 + SRAM2 */
-  SRAM3 (xrw)     : ORIGIN = 0x10040000, LENGTH =   32K    /* we want to use this as shared memory between the 2 cores */
+  RAM    (xrw)    : ORIGIN = 0x10000000, LENGTH =  128K    /* SRAM1 (128K) - RAM for the core */
+  SRAM2  (xrw)    : ORIGIN = 0x10020000, LENGTH =  160K    /* SRAM2 (128K) + SRAM3 (32K) - put USB data there */
+  RAM_D3 (xrw)    : ORIGIN = 0x38000000, LENGTH =   64K    /* we want to use this as shared memory between the 2 cores */
 }
 
 /* Define output sections */
 SECTIONS
 {
-  /* We want some shared memory between the 2 cores, and we want to decide the order in the linker script */
-  .sram3 :
+  /* We want some shared memory between the 2 cores */
+  .sram4 :
   {
-    *(.sram3.bridgeValue*);
-    *(.sram3.bridgeCount*);
-    *(.sram3.bridgeStale*);
-    *(.sram3.bridgeError*);
-    *(.sram3.bridgeBadstatus*);
-    *(.sram3*);
-  } > SRAM3
+    *(.sram4*);
+  } > RAM_D3
+
+  /* We want some memory for the USB data (actually used from CM7) */
+  .sram2 (NOLOAD):
+  {
+    *(.sram2*);
+  } > SRAM2
 
   /* The startup code goes first into FLASH */
   .isr_vector :
@@ -147,7 +149,7 @@ SECTIONS
   . = ALIGN(4);
   .bss :
   {
-    /* This is used by the startup in order to initialize the .bss secion */
+    /* This is used by the startup in order to initialize the .bss section */
     _sbss = .;         /* define a global symbol at bss start */
     __bss_start__ = _sbss;
     *(.bss)

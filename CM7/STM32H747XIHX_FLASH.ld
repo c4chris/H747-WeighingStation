@@ -6,8 +6,8 @@
 **  Author      : STM32CubeIDE
 **
 **  Abstract    : Linker script for STM32H7 series
-**                      2048Kbytes FLASH
-**                      512Kbytes RAM
+**                      1024Kbytes FLASH
+**                       800Kbytes RAM
 **
 **                Set heap size, stack size and stack location according
 **                to application requirements.
@@ -37,7 +37,7 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
+_estack = ORIGIN(RAM_D1) + LENGTH(RAM_D1); /* end of "RAM_D1" Ram type memory */
 
 _Min_Heap_Size = 0x200 ; /* required amount of heap  */
 _Min_Stack_Size = 0x400 ; /* required amount of stack */
@@ -45,28 +45,29 @@ _Min_Stack_Size = 0x400 ; /* required amount of stack */
 /* Memories definition */
 MEMORY
 {
-  RAM     (xrw)  : ORIGIN = 0x24000000, LENGTH =  256K    /* Memory is divided. Actual start is 0x24000000 and actual length is 512K */
+  RAM_D1  (xrw)  : ORIGIN = 0x24000000, LENGTH =  512K
   FLASH   (rx)   : ORIGIN = 0x08000000, LENGTH = 1024K    /* Memory is divided. Actual start is 0x08000000 and actual length is 2048K */
   DTCMRAM (xrw)  : ORIGIN = 0x20000000, LENGTH =  128K
-  RAM_D2  (xrw)  : ORIGIN = 0x30000000, LENGTH =  256K    /* SRAM1 + SRAM2 */
-  SRAM3   (xrw)  : ORIGIN = 0x30040000, LENGTH =   32K    /* we want to use this as shared memory between the 2 cores */
-  RAM_D3  (xrw)  : ORIGIN = 0x38000000, LENGTH =   64K
+  RAM_D2  (xrw)  : ORIGIN = 0x30000000, LENGTH =  128K    /* SRAM1 */
+  SRAM2   (xrw)  : ORIGIN = 0x30020000, LENGTH =  160K    /* SRAM2 (128K) + SRAM3 (32K) */
+  RAM_D3  (xrw)  : ORIGIN = 0x38000000, LENGTH =   64K    /* we want to use this as shared memory between the 2 cores */
   ITCMRAM (xrw)  : ORIGIN = 0x00000000, LENGTH =   64K
 }
 
 /* Sections */
 SECTIONS
 {
-  /* We want some shared memory between the 2 cores, and we want to decide the order in the linker script */
-  .sram3 :
+  /* We want some shared memory between the 2 cores */
+  .sram4 :
   {
-    *(.sram3.bridgeValue*);
-    *(.sram3.bridgeCount*);
-    *(.sram3.bridgeStale*);
-    *(.sram3.bridgeError*);
-    *(.sram3.bridgeBadstatus*);
-    *(.sram3*);
-  } > SRAM3
+    *(.sram4*);
+  } > RAM_D3
+
+  /* We want some memory for USB */
+  .sram2 (NOLOAD):
+  {
+    *(.sram2*);
+  } > SRAM2
 
   /* The startup code into "FLASH" Rom type memory */
   .isr_vector :
@@ -148,7 +149,7 @@ SECTIONS
   /* Used by the startup to initialize data */
   _sidata = LOADADDR(.data);
 
-  /* Initialized data sections into "RAM" Ram type memory */
+  /* Initialized data sections into "RAM_D1" Ram type memory */
   .data : 
   {
     . = ALIGN(4);
@@ -160,9 +161,9 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >RAM AT> FLASH
+  } >RAM_D1 AT> FLASH
 
-  /* Uninitialized data section into "RAM" Ram type memory */
+  /* Uninitialized data section into "RAM_D1" Ram type memory */
   . = ALIGN(4);
   .bss :
   {
@@ -176,9 +177,9 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
-  } >RAM
+  } >RAM_D1
 
-  /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
+  /* User_heap_stack section, used to check that there is enough "RAM_D1" Ram  type memory left */
   ._user_heap_stack :
   {
     . = ALIGN(8);
@@ -187,7 +188,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >RAM
+  } >RAM_D1
 
   /* Remove information from the compiler libraries */
   /DISCARD/ :

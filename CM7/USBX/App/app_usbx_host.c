@@ -49,7 +49,7 @@ typedef struct HOST_CLASS_HID_TOUCHSCREEN_STRUCT
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define USBX_APP_STACK_SIZE                  1024
+#define USBX_APP_STACK_SIZE                  (2 * 1024)
 #define USBX_MEMORY_SIZE                     (64 * 1024)
 #define APP_QUEUE_SIZE                       5
 

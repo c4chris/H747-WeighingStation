@@ -38,6 +38,16 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
+typedef struct
+{
+  unsigned int bridgeError[4];
+  unsigned int bridgeCount[4];
+  unsigned int bridgeStale[4];
+  unsigned int bridgeBadstatus[4];
+  uint32_t bridgeValue[4];
+  uint16_t touchData[4], touchData2[4];
+} CM4_CM7_SharedDataTypeDef;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -46,6 +56,8 @@ extern "C" {
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c4;
 extern UART_HandleTypeDef huart1;
+extern volatile uint32_t threadInitDone;
+extern volatile CM4_CM7_SharedDataTypeDef sharedData;
 
 /* USER CODE END EC */
 
@@ -100,6 +112,22 @@ void my_Delay(uint32_t);
 #define I2C4_SDA_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
+#define HSEM_ID_0 (0U) /* HW semaphore 0 - used to coordinate boot with CM4 */
+#define HSEM_ID_1 (1U) /* HW semaphore 1 - CM4 sends touchdata to CM7 */
+#define HSEM_ID_2 (2U) /* HW semaphore 2 - CM4 signals camera data to CM7 */
+#define HSEM_ID_3 (3U) /* HW semaphore 3 - CM4 signals USB stick status change to CM7 */
+#define HSEM_ID_4 (4U) /* HW semaphore 4 - CM7 asks CM4 to perform some actions on USB stick */
+#define HSEM_0 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0))
+#define HSEM_1 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1))
+#define HSEM_2 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_2))
+#define HSEM_3 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_3))
+#define HSEM_4 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_4))
+
+#define SDRAM_BANK_0                0xD0000000UL
+#define SDRAM_BANK_1                0xD0800000UL
+#define SDRAM_BANK_2                0xD1000000UL
+#define SDRAM_BANK_3                0xD1800000UL
+
 #define ADV7533_MAIN_I2C_ADDR           0x7AU
 #define ADV7533_CEC_DSI_I2C_ADDR        0x78U
 #define ADV7533_MAIN_POWER_DOWN_REG     0x41U
@@ -107,11 +135,6 @@ void my_Delay(uint32_t);
 #define I2Cx_TIMEOUT_MAX               0x3000 /* The value of the maximal timeout for I2C waiting loops */
 
 /* USER CODE END Private defines */
-
-#define SDRAM_BANK_0                0xD0000000UL
-#define SDRAM_BANK_1                0xD0800000UL
-#define SDRAM_BANK_2                0xD1000000UL
-#define SDRAM_BANK_3                0xD1800000UL
 
 #ifdef __cplusplus
 }

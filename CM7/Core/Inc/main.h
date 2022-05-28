@@ -43,11 +43,23 @@ extern __IO int32_t   pend_buffer;
 extern const uint32_t Buffers[];
 extern DSI_HandleTypeDef hdsi;
 extern LTDC_HandleTypeDef hltdc;
+typedef struct
+{
+  unsigned int bridgeError[4];
+  unsigned int bridgeCount[4];
+  unsigned int bridgeStale[4];
+  unsigned int bridgeBadstatus[4];
+  uint32_t bridgeValue[4];
+  uint16_t touchData[4], touchData2[4];
+} CM4_CM7_SharedDataTypeDef;
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+
+extern volatile uint32_t threadInitDone;
+extern volatile CM4_CM7_SharedDataTypeDef sharedData;
 
 /* USER CODE END EC */
 
@@ -219,6 +231,17 @@ void my_Delay(uint32_t);
 #define FMC_D13_Pin GPIO_PIN_8
 #define FMC_D13_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
+
+#define HSEM_ID_0 (0U) /* HW semaphore 0 - used to coordinate boot with CM4 */
+#define HSEM_ID_1 (1U) /* HW semaphore 1 - CM4 sends touchdata to CM7 */
+#define HSEM_ID_2 (2U) /* HW semaphore 2 - CM4 signals camera data to CM7 */
+#define HSEM_ID_3 (3U) /* HW semaphore 3 - CM4 signals USB stick status change to CM7 */
+#define HSEM_ID_4 (4U) /* HW semaphore 4 - CM7 asks CM4 to perform some actions on USB stick */
+#define HSEM_0 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0))
+#define HSEM_1 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1))
+#define HSEM_2 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_2))
+#define HSEM_3 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_3))
+#define HSEM_4 (__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_4))
 
 #define SDRAM_BANK_0                0xD0000000UL
 #define SDRAM_BANK_1                0xD0800000UL

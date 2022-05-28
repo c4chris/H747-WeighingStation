@@ -36,10 +36,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define HSEM_ID_0 (0U) /* HW semaphore 0*/
-#define HSEM_ID_1 (1U) /* HW semaphore 1*/
-#define HSEM_ID_2 (2U) /* HW semaphore 2*/
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -62,6 +58,7 @@ SDRAM_HandleTypeDef hsdram1;
 /* USER CODE BEGIN PV */
 
 volatile uint32_t Notified = 0;
+volatile uint32_t threadInitDone = 0;
 
 __IO int32_t  front_buffer   = 0;
 __IO int32_t  pend_buffer   = -1;
@@ -103,7 +100,7 @@ int main(void)
 
   /* USER CODE END 1 */
 /* USER CODE BEGIN Boot_Mode_Sequence_0 */
-  int32_t timeout;
+
 /* USER CODE END Boot_Mode_Sequence_0 */
 
   /* MPU Configuration--------------------------------------------------------*/
@@ -116,12 +113,10 @@ int main(void)
   SCB_EnableDCache();
 
 /* USER CODE BEGIN Boot_Mode_Sequence_1 */
-  /* Wait until CPU2 boots and enters in stop mode or timeout*/
-  timeout = 0xFFFF;
-  while((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) != RESET) && (timeout-- > 0));
-  if ( timeout < 0 )
+  /* Wait indefinitely until CPU2 boots and enters in stop mode*/
+  while (__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) != RESET)
   {
-  Error_Handler();
+    asm("nop");
   }
 /* USER CODE END Boot_Mode_Sequence_1 */
   /* MCU Configuration--------------------------------------------------------*/
@@ -140,25 +135,22 @@ int main(void)
 	   HSEM notification */
   /*HW semaphore Clock enable*/
   __HAL_RCC_HSEM_CLK_ENABLE();
+  /* Activate HSEM notification for Cortex-M7 - needed for later events (not boot) */
+  HAL_HSEM_ActivateNotification(HSEM_1|HSEM_2|HSEM_3);
   /*Take HSEM */
   HAL_HSEM_FastTake(HSEM_ID_0);
   /*Release HSEM in order to notify the CPU2(CM4)*/
   HAL_HSEM_Release(HSEM_ID_0,0);
   /* wait until CPU2 wakes up from stop mode */
-  timeout = 0xFFFF;
-  while((__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) == RESET) && (timeout-- > 0));
-  if ( timeout < 0 )
+  while (__HAL_RCC_GET_FLAG(RCC_FLAG_D2CKRDY) == RESET)
   {
-  	Error_Handler();
+    asm("nop");
   }
   /* Prepare for sync with CM4 to setup HDMI */
   if (HAL_HSEM_FastTake(HSEM_ID_1) != HAL_OK)
   {
   	Error_Handler();
   }
-
-  /* we want to hear from CM4 about when to initialize HDMI */
-  HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_2));
 
 /* USER CODE END Boot_Mode_Sequence_2 */
 
@@ -430,14 +422,9 @@ static void MX_LTDC_Init(void)
   HAL_HSEM_Release(HSEM_ID_1, 0);
 
   /* Now wait until we receive a notification from CM4 */
-  int32_t timeout = 0xFFFF;
-  while (Notified != __HAL_HSEM_SEMID_TO_MASK(HSEM_ID_2) && (timeout-- > 0))
+  while (Notified != HSEM_2)
   {
-  	HAL_Delay(1);
-  }
-  if ( timeout < 0 )
-  {
-  	Error_Handler();
+    asm("nop");
   }
   /* init is now done */
 
@@ -661,6 +648,16 @@ static void MX_GPIO_Init(void)
 void HAL_HSEM_FreeCallback(uint32_t SemMask)
 {
 	Notified |= SemMask;
+	if (threadInitDone != 0)
+	{
+		__HAL_HSEM_CLEAR_FLAG(SemMask);
+		/* Signal we are done */
+		if (tx_event_flags_set(&cm7_event_group, SemMask, TX_OR) != TX_SUCCESS)
+		{
+		  Error_Handler();
+		}
+	}
+  HAL_HSEM_ActivateNotification(HSEM_1|HSEM_2|HSEM_3);
 }
 
 /**
@@ -804,9 +801,12 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
   while (1)
   {
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
+		my_Delay(250);
+		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
+		my_Delay(250);
   }
   /* USER CODE END Error_Handler_Debug */
 }
@@ -823,7 +823,8 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     example: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  // vim: noet ci pi sts=0 sw=2 ts=2
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

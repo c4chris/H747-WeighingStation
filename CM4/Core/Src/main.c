@@ -36,10 +36,6 @@
 
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 
-#define HSEM_ID_0 (0U) /* HW semaphore 0*/
-#define HSEM_ID_1 (1U) /* HW semaphore 1*/
-#define HSEM_ID_2 (2U) /* HW semaphore 2*/
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -97,7 +93,7 @@ int main(void)
   /*HW semaphore Clock enable*/
   __HAL_RCC_HSEM_CLK_ENABLE();
   /* Activate HSEM notification for Cortex-M4*/
-  HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0));
+  HAL_HSEM_ActivateNotification(HSEM_0);
   /*
   Domain D2 goes to STOP mode (Cortex-M4 in deep-sleep) waiting for Cortex-M7 to
   perform system initialization (system clock config, external memory configuration.. )
@@ -105,10 +101,10 @@ int main(void)
   HAL_PWREx_ClearPendingEvent();
   HAL_PWREx_EnterSTOPMode(PWR_MAINREGULATOR_ON, PWR_STOPENTRY_WFE, PWR_D2_DOMAIN);
   /* Clear HSEM flag */
-  __HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_0));
+  __HAL_HSEM_CLEAR_FLAG(HSEM_0);
 
   /* we want to hear from CM7 about when to initialize HDMI */
-  HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
+  HAL_HSEM_ActivateNotification(HSEM_1);
 
 /* USER CODE END Boot_Mode_Sequence_1 */
   /* MCU Configuration--------------------------------------------------------*/
@@ -246,7 +242,7 @@ static void MX_I2C4_Init(void)
   	Error_Handler();
   }
   int32_t timeout = 0xFFF;
-  while (Notified != __HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1) && (timeout-- > 0))
+  while (Notified != HSEM_1 && (timeout-- > 0))
   {
   	HAL_Delay(1);
   }
@@ -647,9 +643,12 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
-  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   while (1)
   {
+		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+		my_Delay(250);
+		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+		my_Delay(250);
   }
   /* USER CODE END Error_Handler_Debug */
 }
@@ -666,7 +665,8 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     example: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+// vim: noet ci pi sts=0 sw=2 ts=2
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

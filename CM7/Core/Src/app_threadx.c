@@ -36,9 +36,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define DEFAULT_STACK_SIZE                   (1 * 1024)
+#define DEFAULT_STACK_SIZE                   (2 * 1024)
 /* fx_sd_thread priority */
-#define DEFAULT_THREAD_PRIO                  30
+#define DEFAULT_THREAD_PRIO                  10
 
 /* fx_sd_thread preemption priority */
 #define DEFAULT_PREEMPTION_THRESHOLD         DEFAULT_THREAD_PRIO
@@ -68,15 +68,12 @@ TX_EVENT_FLAGS_GROUP cm7_event_group;
 GX_WINDOW_ROOT *root_window;
 
 /* data comning from CM4 core */
-__attribute__((section(".sram3.bridgeError"))) volatile unsigned int bridgeError[4];
-__attribute__((section(".sram3.bridgeCount"))) volatile unsigned int bridgeCount[4];
-__attribute__((section(".sram3.bridgeStale"))) volatile unsigned int bridgeStale[4];
-__attribute__((section(".sram3.bridgeBadstatus"))) volatile unsigned int bridgeBadstatus[4];
-__attribute__((section(".sram3.bridgeValue"))) volatile uint32_t bridgeValue[4];
+__attribute__((section(".sram4.sharedData"))) volatile CM4_CM7_SharedDataTypeDef sharedData;
 
 char textBuffer[LINES*COLUMNS];
 UINT lineEnd[LINES];
 UINT curLine;
+ULONG gCounter;
 
 /* USER CODE END PV */
 
@@ -108,7 +105,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 
   /* USER CODE BEGIN App_ThreadX_Init */
 
-  /*Allocate memory for fx_thread_entry*/
+  /*Allocate memory for cm7_main_thread_entry*/
   ret = tx_byte_allocate(byte_pool, (VOID **) &pointer, DEFAULT_STACK_SIZE, TX_NO_WAIT);
 
   /* Check FILEX_DEFAULT_STACK_SIZE allocation*/
@@ -137,7 +134,7 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
   }
 
 
-  /*Allocate memory for fx_thread_entry*/
+  /*Allocate memory for cm7_lcd_thread_entry*/
   ret = tx_byte_allocate(byte_pool, (VOID **) &pointer, DEFAULT_STACK_SIZE, TX_NO_WAIT);
 
   /* Check FILEX_DEFAULT_STACK_SIZE allocation*/
@@ -281,7 +278,7 @@ VOID weight_update()
 	uint32_t low[4] = { 950, 950, 950, 950 };
 	for (unsigned int i = 0; i < 4; i++)
 	{
-		uint32_t weight = (bridgeValue[i] >> 16) & 0x3fff;
+		uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
 		if (weight < low[i])
 			weight = 0;
 		else

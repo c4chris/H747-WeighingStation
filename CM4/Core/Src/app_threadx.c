@@ -44,7 +44,7 @@ typedef struct _cell_t {
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define DEFAULT_STACK_SIZE               (1 * 1024)
+#define DEFAULT_STACK_SIZE               (2 * 1024)
 /* fx_sd_thread priority */
 #define DEFAULT_THREAD_PRIO              10
 
@@ -74,11 +74,7 @@ volatile unsigned int u2tc;
 volatile unsigned int u2htc;
 volatile unsigned int u2ec;
 volatile unsigned int u2ic;
-__attribute__((section(".sram3.bridgeError"))) volatile unsigned int bridgeError[4];
-__attribute__((section(".sram3.bridgeCount"))) volatile unsigned int bridgeCount[4];
-__attribute__((section(".sram3.bridgeStale"))) volatile unsigned int bridgeStale[4];
-__attribute__((section(".sram3.bridgeBadstatus"))) volatile unsigned int bridgeBadstatus[4];
-__attribute__((section(".sram3.bridgeValue"))) volatile uint32_t bridgeValue[4];
+__attribute__((section(".sram4.sharedData"))) volatile CM4_CM7_SharedDataTypeDef sharedData;
 unsigned char dbgBuf[256];
 unsigned char input[64];
 unsigned char u2tx[256];
@@ -309,13 +305,13 @@ void tx_cm4_main_thread_entry(ULONG thread_input)
 	{
 		ULONG ticks = tx_time_get() / TX_TIMER_TICKS_PER_SECOND;
 		printf("WS %8lu",ticks);
-		printf(" | %u %u %u %u",bridgeError[0],bridgeBadstatus[0],bridgeError[1],bridgeBadstatus[1]);
-		printf(" %u %u %u %u",bridgeError[2],bridgeBadstatus[2],bridgeError[3],bridgeBadstatus[3]);
+		printf(" | %u %u %u %u",sharedData.bridgeError[0],sharedData.bridgeBadstatus[0],sharedData.bridgeError[1],sharedData.bridgeBadstatus[1]);
+		printf(" %u %u %u %u",sharedData.bridgeError[2],sharedData.bridgeBadstatus[2],sharedData.bridgeError[3],sharedData.bridgeBadstatus[3]);
 		for (unsigned int i = 0; i < 4; i++)
 		{
-			if (c[i] != bridgeCount[i])
+			if (c[i] != sharedData.bridgeCount[i])
 			{
-				uint32_t weight = (bridgeValue[i] >> 16) & 0x3fff;
+				uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
 				if (setZero[i])
 				{
 					low[i] = weight;
@@ -328,12 +324,12 @@ void tx_cm4_main_thread_entry(ULONG thread_input)
 				weight *= 5000;
 				weight /= 14000;
 				printf(" | %2d.%02d kg", (uint16_t)(weight / 100), (uint16_t)(weight % 100));
-				uint32_t temp = (bridgeValue[i] >> 5) & 0x7ff;
+				uint32_t temp = (sharedData.bridgeValue[i] >> 5) & 0x7ff;
 				temp *= 2000;
 				temp /= 2048; // just a guess at this point...
 				temp -= 500;
 				printf(" %2d.%01d C", (uint16_t)(temp / 10), (uint16_t)(temp % 10));
-				c[i] = bridgeCount[i];
+				c[i] = sharedData.bridgeCount[i];
 			}
 			else
 				printf(" |                ");
@@ -355,10 +351,10 @@ void tx_cm4_i2c1_thread_entry(ULONG thread_input)
 	HAL_Delay(10);
 	for (unsigned int i = cellStart; i < cellEnd; i++)
 	{
-		bridgeError[i] = 0;
-		bridgeStale[i] = 0;
-		bridgeCount[i] = 0;
-		bridgeBadstatus[i] = 0;
+		sharedData.bridgeError[i] = 0;
+		sharedData.bridgeStale[i] = 0;
+		sharedData.bridgeCount[i] = 0;
+		sharedData.bridgeBadstatus[i] = 0;
 	}
 	/* Infinite loop */
 	for(;;)
@@ -369,7 +365,7 @@ void tx_cm4_i2c1_thread_entry(ULONG thread_input)
 			res = HAL_I2C_Master_Receive(cell[i].handle, cell[i].address | 1, dataBuf, 4, I2C_Timeout);
 			if (res != HAL_OK)
 			{
-				bridgeError[i] += 1;
+				sharedData.bridgeError[i] += 1;
 #if 0
 				HAL_I2C_DeInit(cell[i].handle);
 				tx_thread_sleep(TX_TIMER_TICKS_PER_SECOND / 2);
@@ -382,12 +378,12 @@ void tx_cm4_i2c1_thread_entry(ULONG thread_input)
 				uint8_t status = (dataBuf[0] >> 6) & 0x3;
 				if (status == 0)
 				{
-					bridgeValue[i] = (dataBuf[0] << 24) | (dataBuf[1] << 16) | (dataBuf[2] << 8) | dataBuf[3];
-					bridgeCount[i] += 1;
+					sharedData.bridgeValue[i] = (dataBuf[0] << 24) | (dataBuf[1] << 16) | (dataBuf[2] << 8) | dataBuf[3];
+					sharedData.bridgeCount[i] += 1;
 				} else if (status == 2)
-					bridgeStale[i] += 1;
+					sharedData.bridgeStale[i] += 1;
 				else
-					bridgeBadstatus[i] += 1;
+					sharedData.bridgeBadstatus[i] += 1;
 			}
 		}
 		tx_thread_sleep(TX_TIMER_TICKS_PER_SECOND / 20);
@@ -406,10 +402,10 @@ void tx_cm4_i2c4_thread_entry(ULONG thread_input)
 	HAL_Delay(10);
 	for (unsigned int i = cellStart; i < cellEnd; i++)
 	{
-		bridgeError[i] = 0;
-		bridgeStale[i] = 0;
-		bridgeCount[i] = 0;
-		bridgeBadstatus[i] = 0;
+		sharedData.bridgeError[i] = 0;
+		sharedData.bridgeStale[i] = 0;
+		sharedData.bridgeCount[i] = 0;
+		sharedData.bridgeBadstatus[i] = 0;
 	}
 	/* Infinite loop */
 	for(;;)
@@ -421,7 +417,7 @@ void tx_cm4_i2c4_thread_entry(ULONG thread_input)
 			res = HAL_I2C_Master_Receive(cell[i].handle, cell[i].address | 1, dataBuf, 4, I2C_Timeout);
 			if (res != HAL_OK)
 			{
-				bridgeError[i] += 1;
+				sharedData.bridgeError[i] += 1;
 #if 0
 				HAL_I2C_DeInit(cell[i].handle);
 				tx_thread_sleep(TX_TIMER_TICKS_PER_SECOND / 2);
@@ -434,12 +430,12 @@ void tx_cm4_i2c4_thread_entry(ULONG thread_input)
 				uint8_t status = (dataBuf[0] >> 6) & 0x3;
 				if (status == 0)
 				{
-					bridgeValue[i] = (dataBuf[0] << 24) | (dataBuf[1] << 16) | (dataBuf[2] << 8) | dataBuf[3];
-					bridgeCount[i] += 1;
+					sharedData.bridgeValue[i] = (dataBuf[0] << 24) | (dataBuf[1] << 16) | (dataBuf[2] << 8) | dataBuf[3];
+					sharedData.bridgeCount[i] += 1;
 				} else if (status == 2)
-					bridgeStale[i] += 1;
+					sharedData.bridgeStale[i] += 1;
 				else
-					bridgeBadstatus[i] += 1;
+					sharedData.bridgeBadstatus[i] += 1;
 			}
 		}
 		ULONG ticks = tx_time_get();

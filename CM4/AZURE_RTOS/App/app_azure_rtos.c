@@ -63,6 +63,8 @@ static TX_BYTE_POOL tx_app_byte_pool;
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
 
+extern void Error_Handler(void);
+
 /* USER CODE END PFP */
 
 /**
@@ -83,6 +85,8 @@ VOID tx_application_define(VOID *first_unused_memory)
   {
     /* USER CODE BEGIN TX_Byte_Pool_Error */
 
+    Error_Handler();
+
     /* USER CODE END TX_Byte_Pool_Error */
   }
   else
@@ -96,6 +100,8 @@ VOID tx_application_define(VOID *first_unused_memory)
     if (status != TX_SUCCESS)
     {
       /* USER CODE BEGIN  App_ThreadX_Init_Error */
+
+      Error_Handler();
 
       /* USER CODE END  App_ThreadX_Init_Error */
     }
