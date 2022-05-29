@@ -71,7 +71,7 @@ extern "C" {
 UINT MX_USBX_Host_Init(VOID *memory_ptr);
 
 /* USER CODE BEGIN EFP */
-UINT  MX_USB_Host_Init(void);
+UINT  App_USBX_Host_Init(void);
 void  USBH_DriverVBUS(uint8_t state);
 void  usbx_app_thread_entry(ULONG arg);
 void  hid_mouse_thread_entry(ULONG arg);

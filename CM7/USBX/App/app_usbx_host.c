@@ -84,6 +84,7 @@ UCHAR system_host_class_hid_client_touchscreen_name[] = "host_class_hid_client_t
 /* USER CODE BEGIN PFP */
 
 extern void Error_Handler(void);
+UINT host_class_hid_touchscreen_entry(UX_HOST_CLASS_HID_CLIENT_COMMAND *);
 
 /* USER CODE END PFP */
 /**
@@ -186,6 +187,58 @@ UINT MX_USBX_Host_Init(VOID *memory_ptr)
 
 /* USER CODE BEGIN 1 */
 /**
+  * @brief App_USBX_Host_Init
+  *        Initialization of USB device.
+  * Init USB Host Library, add supported class and start the library
+  * @retval None
+  */
+UINT App_USBX_Host_Init(void)
+{
+  UINT ret = UX_SUCCESS;
+
+  /* The code below is required for installing the host portion of USBX. */
+  if (ux_host_stack_initialize(ux_host_event_callback) != UX_SUCCESS)
+  {
+    ret = UX_ERROR;
+  }
+
+  /* Register hid class. */
+  if (ux_host_stack_class_register(_ux_system_host_class_hid_name,
+                                   _ux_host_class_hid_entry) != UX_SUCCESS)
+  {
+    ret = UX_ERROR;
+  }
+
+  /* https://eleccelerator.com/tutorial-about-usb-hid-report-descriptors/ */
+  /* Register HID TouchScreen client */
+  if (ux_host_class_hid_client_register(system_host_class_hid_client_touchscreen_name,
+                                        host_class_hid_touchscreen_entry) != UX_SUCCESS)
+  {
+    ret = UX_ERROR;
+  }
+
+  /* Register HID Mouse client */
+  if (ux_host_class_hid_client_register(_ux_system_host_class_hid_client_mouse_name,
+                                        ux_host_class_hid_mouse_entry) != UX_SUCCESS)
+  {
+    ret = UX_ERROR;
+  }
+
+  /* Register all the USB host controllers available in this system.  */
+  if (ux_host_stack_hcd_register(_ux_system_host_hcd_stm32_name,
+                                 _ux_hcd_stm32_initialize, USB_OTG_HS_PERIPH_BASE,
+                                 (ULONG)&hhcd_USB_OTG_HS) != UX_SUCCESS)
+  {
+    ret = UX_ERROR;
+  }
+
+  /* Enable USB Global Interrupt*/
+  HAL_HCD_Start(&hhcd_USB_OTG_HS);
+
+  return ret;
+}
+
+/**
   * @brief  Application_thread_entry .
   * @param  ULONG arg
   * @retval Void
@@ -195,7 +248,7 @@ void  usbx_app_thread_entry(ULONG arg)
   printf("Starting CM7 Run on %s and %s\n", _tx_version_id, _ux_version_id);
 
   /* Initialize USBX_Host */
-  MX_USB_Host_Init();
+  App_USBX_Host_Init();
 
   /* Start Application Message */
   USBH_UsrLog(" **** USB OTG HS in FS HID Host **** \n");
@@ -574,58 +627,6 @@ UINT host_class_hid_touchscreen_entry(UX_HOST_CLASS_HID_CLIENT_COMMAND *command)
 
 	/* Return error status.  */
 	return(UX_ERROR);
-}
-
-/**
-  * @brief MX_USB_Host_Init
-  *        Initialization of USB device.
-  * Init USB Host Library, add supported class and start the library
-  * @retval None
-  */
-UINT MX_USB_Host_Init(void)
-{
-  UINT ret = UX_SUCCESS;
-
-  /* The code below is required for installing the host portion of USBX. */
-  if (ux_host_stack_initialize(ux_host_event_callback) != UX_SUCCESS)
-  {
-    ret = UX_ERROR;
-  }
-
-  /* Register hid class. */
-  if (ux_host_stack_class_register(_ux_system_host_class_hid_name,
-                                   _ux_host_class_hid_entry) != UX_SUCCESS)
-  {
-    ret = UX_ERROR;
-  }
-
-  /* https://eleccelerator.com/tutorial-about-usb-hid-report-descriptors/ */
-  /* Register HID TouchScreen client */
-  if (ux_host_class_hid_client_register(system_host_class_hid_client_touchscreen_name,
-                                        host_class_hid_touchscreen_entry) != UX_SUCCESS)
-  {
-    ret = UX_ERROR;
-  }
-
-  /* Register HID Mouse client */
-  if (ux_host_class_hid_client_register(_ux_system_host_class_hid_client_mouse_name,
-                                        ux_host_class_hid_mouse_entry) != UX_SUCCESS)
-  {
-    ret = UX_ERROR;
-  }
-
-  /* Register all the USB host controllers available in this system.  */
-  if (ux_host_stack_hcd_register(_ux_system_host_hcd_stm32_name,
-                                 _ux_hcd_stm32_initialize, USB_OTG_HS_PERIPH_BASE,
-                                 (ULONG)&hhcd_USB_OTG_HS) != UX_SUCCESS)
-  {
-    ret = UX_ERROR;
-  }
-
-  /* Enable USB Global Interrupt*/
-  HAL_HCD_Start(&hhcd_USB_OTG_HS);
-
-  return ret;
 }
 
 void  hid_touchscreen_thread_entry(ULONG arg)
