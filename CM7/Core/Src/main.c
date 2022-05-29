@@ -497,7 +497,7 @@ static void MX_USB_OTG_HS_HCD_Init(void)
   /* USER CODE END USB_OTG_HS_Init 1 */
   hhcd_USB_OTG_HS.Instance = USB_OTG_HS;
   hhcd_USB_OTG_HS.Init.Host_channels = 16;
-  hhcd_USB_OTG_HS.Init.speed = HCD_SPEED_HIGH;
+  hhcd_USB_OTG_HS.Init.speed = HCD_SPEED_FULL;
   hhcd_USB_OTG_HS.Init.dma_enable = ENABLE;
   hhcd_USB_OTG_HS.Init.phy_itface = USB_OTG_ULPI_PHY;
   hhcd_USB_OTG_HS.Init.Sof_enable = DISABLE;

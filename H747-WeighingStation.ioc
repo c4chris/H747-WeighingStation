@@ -1507,7 +1507,7 @@ STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.USBXCcUSBJjUSBXJjUXOoHostOoControll
 STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.USBXCcUSBJjUSBXJjUXOoHostOoCoreStack=true
 STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.USBX_Version=6.1.10
 STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.UX_HOST_APP_MEM_POOL_SIZE=(72 * 1024)
-STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.UX_MAX_HCD=2
+STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.UX_MAX_HCD=1
 STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7.UX_SLAVE_REQUEST_DATA_MAX_LENGTH=4096
 STMicroelectronics.X-CUBE-AZRTOS-H7.2.1.0_M7_SwParameter=USBXCcUSBJjUSBXJjUXOoHostOoClassOoHIDOoCore\:true;STM32CubeIiBSPIiComponentsCcBoardOoPartJjSDRAMOoMemoryJjIS42S32800J\:true;USBXCcUSBJjUSBXJjCoreSystem\:true;ThreadXCcRTOSJjThreadXJjCore\:true;USBXCcUSBJjUSBXJjUXOoHostOoControllers\:true;USBXCcUSBJjUSBXJjUXOoHostOoCoreStack\:true;USBXCcUSBJjUSBXJjUXOoHostOoClassOoHIDOoMouse\:true;STM32CubeIiBSPIiComponentsCcBoardOoPartJjSDRAMOoMemoryJjIS42S32800G\:true;
 USART1.IPParameters=VirtualMode-Asynchronous
@@ -1516,7 +1516,7 @@ USB_OTG_HS.IPParameters=VirtualMode-Host_HS,speed-Host_HS,Sof_enable-Host_HS,dma
 USB_OTG_HS.Sof_enable-Host_HS=DISABLE
 USB_OTG_HS.VirtualMode-Host_HS=Host_HS
 USB_OTG_HS.dma_enable-Host_HS=ENABLE
-USB_OTG_HS.speed-Host_HS=HCD_SPEED_HIGH
+USB_OTG_HS.speed-Host_HS=HCD_SPEED_FULL
 VP_DMA2D_VS_DMA2D.Mode=DMA2D_Activate
 VP_DMA2D_VS_DMA2D.Signal=DMA2D_VS_DMA2D
 VP_LTDC_DSIMode.Mode=RGB888
