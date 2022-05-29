@@ -422,7 +422,7 @@ static void MX_LTDC_Init(void)
   HAL_HSEM_Release(HSEM_ID_1, 0);
 
   /* Now wait until we receive a notification from CM4 */
-  while (Notified != HSEM_2)
+  while ((Notified & HSEM_2) == 0)
   {
     asm("nop");
   }

@@ -56,7 +56,7 @@ static TX_BYTE_POOL tx_app_byte_pool;
 
 /* USER CODE BEGIN UX_HOST_Pool_Buffer */
 /* __attribute__((section(".UsbxPoolSection"))) */
-__attribute__((section(".sram1.UsbxPoolSection")))
+__attribute__((section(".sram2.UsbxPoolSection")))
 /* USER CODE END UX_HOST_Pool_Buffer */
 #if defined ( __ICCARM__ )
 #pragma data_alignment=4

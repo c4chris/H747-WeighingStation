@@ -241,14 +241,9 @@ static void MX_I2C4_Init(void)
   {
   	Error_Handler();
   }
-  int32_t timeout = 0xFFF;
-  while (Notified != HSEM_1 && (timeout-- > 0))
+  while ((Notified & HSEM_1) == 0)
   {
   	HAL_Delay(1);
-  }
-  if ( timeout < 0 )
-  {
-  	Error_Handler();
   }
   /* do init */
   if (ADV7533_Configure() != 0)
