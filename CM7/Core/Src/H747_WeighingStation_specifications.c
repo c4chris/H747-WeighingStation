@@ -6,7 +6,7 @@
 /*  GUIX Studio User Guide, or visit our web site at azure.com/rtos            */
 /*                                                                             */
 /*  GUIX Studio Revision 6.1.11.0                                              */
-/*  Date (dd.mm.yyyy):  6. 6.2022   Time (hh:mm): 15:12                        */
+/*  Date (dd.mm.yyyy):  7. 6.2022   Time (hh:mm): 01:09                        */
 /*******************************************************************************/
 
 
@@ -360,7 +360,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s1_value_define =
     #if defined(GX_WIDGET_USER_DATA)
     0,                                       /* user data                      */
     #endif
-    GX_STYLE_BORDER_THIN|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
+    GX_STYLE_BORDER_NONE|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
     0,                                       /* status flags                   */
     sizeof(GX_NUMERIC_PROMPT),               /* control block size             */
     GX_COLOR_ID_WIDGET_FILL,                 /* normal color id                */
@@ -369,7 +369,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s1_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {14, 212, 93, 245},                      /* widget size                    */
+    {4, 252, 83, 285},                       /* widget size                    */
     GX_NULL,                                 /* no next widget                 */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s1_value), /* control block */
@@ -393,7 +393,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s1_label_define =
     gx_studio_prompt_create,                 /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {15, 193, 94, 206},                      /* widget size                    */
+    {5, 233, 84, 246},                       /* widget size                    */
     &main_window_s1_value_define,            /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s1_label), /* control block */
@@ -408,7 +408,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s2_value_define =
     #if defined(GX_WIDGET_USER_DATA)
     0,                                       /* user data                      */
     #endif
-    GX_STYLE_BORDER_THIN|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
+    GX_STYLE_BORDER_NONE|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
     0,                                       /* status flags                   */
     sizeof(GX_NUMERIC_PROMPT),               /* control block size             */
     GX_COLOR_ID_WIDGET_FILL,                 /* normal color id                */
@@ -417,7 +417,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s2_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {94, 212, 173, 245},                     /* widget size                    */
+    {84, 252, 163, 285},                     /* widget size                    */
     GX_NULL,                                 /* no next widget                 */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s2_value), /* control block */
@@ -441,7 +441,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s2_label_define =
     gx_studio_prompt_create,                 /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {95, 193, 174, 206},                     /* widget size                    */
+    {85, 233, 164, 246},                     /* widget size                    */
     &main_window_s2_value_define,            /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s2_label), /* control block */
@@ -456,7 +456,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s3_value_define =
     #if defined(GX_WIDGET_USER_DATA)
     0,                                       /* user data                      */
     #endif
-    GX_STYLE_BORDER_THIN|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
+    GX_STYLE_BORDER_NONE|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
     0,                                       /* status flags                   */
     sizeof(GX_NUMERIC_PROMPT),               /* control block size             */
     GX_COLOR_ID_WIDGET_FILL,                 /* normal color id                */
@@ -465,7 +465,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s3_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {14, 292, 93, 325},                      /* widget size                    */
+    {4, 332, 83, 365},                       /* widget size                    */
     GX_NULL,                                 /* no next widget                 */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s3_value), /* control block */
@@ -489,7 +489,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s3_label_define =
     gx_studio_prompt_create,                 /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {15, 273, 94, 286},                      /* widget size                    */
+    {5, 313, 84, 326},                       /* widget size                    */
     &main_window_s3_value_define,            /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s3_label), /* control block */
@@ -504,7 +504,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s4_value_define =
     #if defined(GX_WIDGET_USER_DATA)
     0,                                       /* user data                      */
     #endif
-    GX_STYLE_BORDER_THIN|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
+    GX_STYLE_BORDER_NONE|GX_STYLE_TRANSPARENT|GX_STYLE_TEXT_CENTER,   /* style flags */
     0,                                       /* status flags                   */
     sizeof(GX_NUMERIC_PROMPT),               /* control block size             */
     GX_COLOR_ID_WIDGET_FILL,                 /* normal color id                */
@@ -513,7 +513,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s4_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {94, 292, 173, 325},                     /* widget size                    */
+    {84, 332, 163, 365},                     /* widget size                    */
     GX_NULL,                                 /* no next widget                 */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s4_value), /* control block */
@@ -537,7 +537,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s4_label_define =
     gx_studio_prompt_create,                 /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {95, 273, 174, 286},                     /* widget size                    */
+    {85, 313, 164, 326},                     /* widget size                    */
     &main_window_s4_value_define,            /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s4_label), /* control block */
@@ -561,7 +561,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s4_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {100, 270, 168, 338},                    /* widget size                    */
+    {90, 310, 158, 378},                     /* widget size                    */
     GX_NULL,                                 /* no next widget                 */
     &main_window_s4_label_define,            /* child widget definition        */
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s4_icon), /* control block */
@@ -585,7 +585,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s3_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {20, 270, 88, 338},                      /* widget size                    */
+    {10, 310, 78, 378},                      /* widget size                    */
     &main_window_s4_icon_define,             /* next widget definition         */
     &main_window_s3_label_define,            /* child widget definition        */
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s3_icon), /* control block */
@@ -609,7 +609,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s2_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {100, 190, 168, 258},                    /* widget size                    */
+    {90, 230, 158, 298},                     /* widget size                    */
     &main_window_s3_icon_define,             /* next widget definition         */
     &main_window_s2_label_define,            /* child widget definition        */
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s2_icon), /* control block */
@@ -633,7 +633,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_s1_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {20, 190, 88, 258},                      /* widget size                    */
+    {10, 230, 78, 298},                      /* widget size                    */
     &main_window_s2_icon_define,             /* next widget definition         */
     &main_window_s1_label_define,            /* child widget definition        */
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_s1_icon), /* control block */
@@ -657,7 +657,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_sub_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {254, 195, 359, 253},                    /* widget size                    */
+    {175, 235, 280, 293},                    /* widget size                    */
     &main_window_s1_icon_define,             /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_sub_icon), /* control block */
@@ -681,7 +681,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_zero_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {540, 265, 645, 323},                    /* widget size                    */
+    {460, 315, 565, 373},                    /* widget size                    */
     &main_window_sub_icon_define,            /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_zero_icon), /* control block */
@@ -705,7 +705,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_add_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {540, 195, 645, 253},                    /* widget size                    */
+    {460, 235, 565, 293},                    /* widget size                    */
     &main_window_zero_icon_define,           /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_add_icon), /* control block */
@@ -729,7 +729,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_sum_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {270, 265, 529, 324},                    /* widget size                    */
+    {190, 315, 449, 374},                    /* widget size                    */
     &main_window_add_icon_define,            /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_sum_value), /* control block */
@@ -753,7 +753,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_count_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {370, 195, 529, 254},                    /* widget size                    */
+    {290, 235, 449, 294},                    /* widget size                    */
     &main_window_sum_value_define,           /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_count_value), /* control block */
@@ -777,7 +777,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_tare_value_define =
     gx_studio_numeric_prompt_create,         /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {468, 340, 627, 399},                    /* widget size                    */
+    {575, 315, 714, 374},                    /* widget size                    */
     &main_window_count_value_define,         /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_tare_value), /* control block */
@@ -801,7 +801,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_tare_icon_define =
     gx_studio_icon_create,                   /* create function                */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {644, 336, 707, 399},                    /* widget size                    */
+    {644, 235, 707, 298},                    /* widget size                    */
     &main_window_tare_value_define,          /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_tare_icon), /* control block */
@@ -825,7 +825,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_text_view_define =
     gx_studio_multi_line_text_view_create,     /* create function              */
     GX_NULL,                                 /* drawing function override      */
     GX_NULL,                                 /* event function override        */
-    {0, 416, 719, 575},                      /* widget size                    */
+    {0, 392, 719, 575},                      /* widget size                    */
     &main_window_tare_icon_define,           /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_text_view), /* control block */
@@ -849,7 +849,7 @@ GX_CONST GX_STUDIO_WIDGET main_window_weight_prompt_define =
     gx_studio_numeric_pixelmap_prompt_create,     /* create function           */
     GX_NULL,                                 /* drawing function override      */
     (UINT (*)(GX_WIDGET *, GX_EVENT *)) weight_prompt_event, /* event function override */
-    {0, 0, 639, 175},                        /* widget size                    */
+    {0, 0, 639, 215},                        /* widget size                    */
     &main_window_text_view_define,           /* next widget definition         */
     GX_NULL,                                 /* no child widgets               */ 
     offsetof(MAIN_WINDOW_CONTROL_BLOCK, main_window_weight_prompt), /* control block */

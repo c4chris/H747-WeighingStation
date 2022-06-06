@@ -43,8 +43,8 @@
 /* fx_sd_thread preemption priority */
 #define DEFAULT_PREEMPTION_THRESHOLD         DEFAULT_THREAD_PRIO
 
-#define COLUMNS                              80
-#define LINES                                20
+#define COLUMNS                              96
+#define LINES                                 9
 
 /* USER CODE END PD */
 
@@ -286,6 +286,21 @@ VOID weight_update()
 		weight *= 5000;
 		weight /= 14000;
 		total += weight;
+		switch (i)
+		{
+		case 0:
+			gx_numeric_prompt_value_set(&main_window.main_window_s1_value, weight);
+			break;
+		case 1:
+			gx_numeric_prompt_value_set(&main_window.main_window_s2_value, weight);
+			break;
+		case 2:
+			gx_numeric_prompt_value_set(&main_window.main_window_s3_value, weight);
+			break;
+		case 3:
+			gx_numeric_prompt_value_set(&main_window.main_window_s4_value, weight);
+			break;
+		}
 	}
 	total /= 10;
   gx_numeric_pixelmap_prompt_value_set(&main_window.main_window_weight_prompt, total);
