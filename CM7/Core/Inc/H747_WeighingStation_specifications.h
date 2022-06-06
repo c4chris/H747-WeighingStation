@@ -5,8 +5,8 @@
 /*  specification file(s). For more information please refer to the Azure RTOS */
 /*  GUIX Studio User Guide, or visit our web site at azure.com/rtos            */
 /*                                                                             */
-/*  GUIX Studio Revision 6.1.7.0                                               */
-/*  Date (dd.mm.yyyy):  3. 7.2021   Time (hh:mm): 09:54                        */
+/*  GUIX Studio Revision 6.1.11.0                                              */
+/*  Date (dd.mm.yyyy):  6. 6.2022   Time (hh:mm): 15:12                        */
 /*******************************************************************************/
 
 
@@ -22,6 +22,21 @@ extern   "C" {
 
 /* Define widget ids                                                           */
 
+#define ID_TARE_ICON 1
+#define ID_TARE_VALUE 2
+#define ID_COUNT_VALUE 3
+#define ID_SUM_VALUE 4
+#define ID_ADD_ICON 5
+#define ID_ZERO_ICON 6
+#define ID_SUB_ICON 7
+#define ID_S1_ICON 8
+#define ID_S1_VALUE 9
+#define ID_S2_ICON 10
+#define ID_S2_VALUE 11
+#define ID_S3_ICON 12
+#define ID_S3_VALUE 13
+#define ID_S4_ICON 14
+#define ID_S4_VALUE 15
 
 
 /* Define animation ids                                                        */
@@ -68,6 +83,32 @@ typedef struct
 
 typedef struct
 {
+    GX_RESOURCE_ID normal_pixelmap_id;
+    GX_RESOURCE_ID selected_pixelmap_id;
+} GX_ICON_PROPERTIES;
+
+typedef struct
+{
+    GX_RESOURCE_ID string_id;
+    GX_RESOURCE_ID font_id;
+    GX_RESOURCE_ID normal_text_color_id;
+    GX_RESOURCE_ID selected_text_color_id;
+    GX_RESOURCE_ID disabled_text_color_id;
+} GX_PROMPT_PROPERTIES;
+
+typedef struct
+{
+    GX_RESOURCE_ID string_id;
+    GX_RESOURCE_ID font_id;
+    GX_RESOURCE_ID normal_text_color_id;
+    GX_RESOURCE_ID selected_text_color_id;
+    GX_RESOURCE_ID disabled_text_color_id;
+    VOID (*format_func)(GX_NUMERIC_PROMPT *, INT);
+    INT            numeric_prompt_value;
+} GX_NUMERIC_PROMPT_PROPERTIES;
+
+typedef struct
+{
     GX_RESOURCE_ID string_id;
     GX_RESOURCE_ID font_id;
     GX_RESOURCE_ID normal_text_color_id;
@@ -90,25 +131,6 @@ typedef struct
 
 typedef struct
 {
-    int                 total_rows;
-    int                 selected_row;
-    GX_VALUE            row_height;
-    GX_UBYTE            start_alpha;
-    GX_UBYTE            end_alpha;
-    GX_RESOURCE_ID      normal_font;
-    GX_RESOURCE_ID      selected_font;
-    GX_RESOURCE_ID      normal_text_color;
-    GX_RESOURCE_ID      selected_text_color;
-    GX_RESOURCE_ID      disabled_text_color;
-    GX_RESOURCE_ID      wallpaper_id;
-    GX_RESOURCE_ID      selected_background;
-    UINT (*callback)(struct GX_NUMERIC_SCROLL_WHEEL_STRUCT*, INT, GX_STRING *);
-    int                 start_val;
-    int                 end_val;
-} GX_NUMERIC_SCROLL_WHEEL_PROPERTIES;
-
-typedef struct
-{
     GX_RESOURCE_ID string_id;
     GX_RESOURCE_ID font_id;
     GX_RESOURCE_ID normal_text_color_id;
@@ -125,9 +147,26 @@ typedef struct MAIN_WINDOW_CONTROL_BLOCK_STRUCT
 {
     GX_WINDOW_MEMBERS_DECLARE
     GX_NUMERIC_PIXELMAP_PROMPT main_window_weight_prompt;
-    GX_BUTTON main_window_button;
-    GX_NUMERIC_SCROLL_WHEEL main_window_numeric_scroll_wheel;
     GX_MULTI_LINE_TEXT_VIEW main_window_text_view;
+    GX_ICON main_window_tare_icon;
+    GX_NUMERIC_PROMPT main_window_tare_value;
+    GX_NUMERIC_PROMPT main_window_count_value;
+    GX_NUMERIC_PROMPT main_window_sum_value;
+    GX_ICON main_window_add_icon;
+    GX_ICON main_window_zero_icon;
+    GX_ICON main_window_sub_icon;
+    GX_ICON main_window_s1_icon;
+    GX_PROMPT main_window_s1_label;
+    GX_NUMERIC_PROMPT main_window_s1_value;
+    GX_ICON main_window_s2_icon;
+    GX_PROMPT main_window_s2_label;
+    GX_NUMERIC_PROMPT main_window_s2_value;
+    GX_ICON main_window_s3_icon;
+    GX_PROMPT main_window_s3_label;
+    GX_NUMERIC_PROMPT main_window_s3_value;
+    GX_ICON main_window_s4_icon;
+    GX_PROMPT main_window_s4_label;
+    GX_NUMERIC_PROMPT main_window_s4_value;
 } MAIN_WINDOW_CONTROL_BLOCK;
 
 
@@ -168,10 +207,11 @@ typedef struct GX_STUDIO_DISPLAY_INFO_STRUCT
 
 /* Declare Studio-generated functions for creating top-level widgets           */
 
-UINT gx_studio_button_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
+UINT gx_studio_icon_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
+UINT gx_studio_prompt_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
+UINT gx_studio_numeric_prompt_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
 UINT gx_studio_numeric_pixelmap_prompt_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
 UINT gx_studio_window_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
-UINT gx_studio_numeric_scroll_wheel_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
 UINT gx_studio_multi_line_text_view_create(GX_CONST GX_STUDIO_WIDGET *info, GX_WIDGET *control_block, GX_WIDGET *parent);
 GX_WIDGET *gx_studio_widget_create(GX_BYTE *storage, GX_CONST GX_STUDIO_WIDGET *definition, GX_WIDGET *parent);
 UINT gx_studio_named_widget_create(char *name, GX_WIDGET *parent, GX_WIDGET **new_widget);
