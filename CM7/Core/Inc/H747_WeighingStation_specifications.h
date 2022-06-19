@@ -6,7 +6,7 @@
 /*  GUIX Studio User Guide, or visit our web site at azure.com/rtos            */
 /*                                                                             */
 /*  GUIX Studio Revision 6.1.11.0                                              */
-/*  Date (dd.mm.yyyy):  7. 6.2022   Time (hh:mm): 01:09                        */
+/*  Date (dd.mm.yyyy): 18. 6.2022   Time (hh:mm): 13:03                        */
 /*******************************************************************************/
 
 
@@ -153,8 +153,11 @@ typedef struct MAIN_WINDOW_CONTROL_BLOCK_STRUCT
     GX_NUMERIC_PROMPT main_window_count_value;
     GX_NUMERIC_PROMPT main_window_sum_value;
     GX_ICON main_window_add_icon;
+    GX_PROMPT main_window_add_label;
     GX_ICON main_window_zero_icon;
+    GX_PROMPT main_window_zero_label;
     GX_ICON main_window_sub_icon;
+    GX_PROMPT main_window_sub_label;
     GX_ICON main_window_s1_icon;
     GX_PROMPT main_window_s1_label;
     GX_NUMERIC_PROMPT main_window_s1_value;

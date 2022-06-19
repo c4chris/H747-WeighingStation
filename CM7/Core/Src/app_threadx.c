@@ -74,6 +74,7 @@ char textBuffer[LINES*COLUMNS];
 UINT lineEnd[LINES];
 UINT curLine;
 ULONG gCounter;
+uint32_t gWeight = 0;
 
 /* USER CODE END PV */
 
@@ -275,40 +276,23 @@ VOID weight_update()
 {
   /* Set a value to "my_numeric_pix_prompt". */
 	uint32_t total = 0;
-	uint32_t low[4] = { 950, 950, 950, 950 };
+	gx_numeric_prompt_value_set(&main_window.main_window_s1_value, sharedData.weight[0]);
+	gx_numeric_prompt_value_set(&main_window.main_window_s2_value, sharedData.weight[1]);
+	gx_numeric_prompt_value_set(&main_window.main_window_s3_value, sharedData.weight[2]);
+	gx_numeric_prompt_value_set(&main_window.main_window_s4_value, sharedData.weight[3]);
 	for (unsigned int i = 0; i < 4; i++)
 	{
-		uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
-		if (weight < low[i])
-			weight = 0;
-		else
-			weight -= low[i];
-		weight *= 5000;
-		weight /= 14000;
-		total += weight;
-		switch (i)
-		{
-		case 0:
-			gx_numeric_prompt_value_set(&main_window.main_window_s1_value, weight);
-			break;
-		case 1:
-			gx_numeric_prompt_value_set(&main_window.main_window_s2_value, weight);
-			break;
-		case 2:
-			gx_numeric_prompt_value_set(&main_window.main_window_s3_value, weight);
-			break;
-		case 3:
-			gx_numeric_prompt_value_set(&main_window.main_window_s4_value, weight);
-			break;
-		}
+		total += sharedData.weight[i];
 	}
 	total /= 10;
+	gWeight = total;
   gx_numeric_pixelmap_prompt_value_set(&main_window.main_window_weight_prompt, total);
 }
 
 /*************************************************************************************/
 UINT main_screen_event_handler(GX_WINDOW *window, GX_EVENT *event_ptr)
 {
+	ULONG style;
 	switch (event_ptr->gx_event_type)
 	{
 		case GX_EVENT_SHOW:
@@ -325,6 +309,36 @@ UINT main_screen_event_handler(GX_WINDOW *window, GX_EVENT *event_ptr)
 				weight_update();
 			}
 			break;
+
+		case (ID_TARE_ICON << 8) | GX_EVENT_CLICKED:
+			style = 0;
+			gx_widget_style_get((GX_WIDGET *)&main_window.main_window_tare_icon, &style);
+			if (style & GX_STYLE_DRAW_SELECTED)
+			{
+				gx_widget_style_remove((GX_WIDGET *)&main_window.main_window_tare_icon, GX_STYLE_DRAW_SELECTED);
+				/* set back in raw mode */
+				/* clear the tare value field */
+				gx_numeric_prompt_value_set(&main_window.main_window_tare_value, 0);
+				/* set the unsetZero field */
+				sharedData.unsetZero[0] = 1;
+				sharedData.unsetZero[1] = 1;
+				sharedData.unsetZero[2] = 1;
+				sharedData.unsetZero[3] = 1;
+			}
+			else
+			{
+				gx_widget_style_add((GX_WIDGET *)&main_window.main_window_tare_icon, GX_STYLE_DRAW_SELECTED);
+				/* use current weight value as tare */
+				/* record current weight to display in the tare value field */
+				gx_numeric_prompt_value_set(&main_window.main_window_tare_value, gWeight);
+				/* set the setZero field */
+				sharedData.setZero[0] = 1;
+				sharedData.setZero[1] = 1;
+				sharedData.setZero[2] = 1;
+				sharedData.setZero[3] = 1;
+			}
+			break;
+
 
 		default:
 			//HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);

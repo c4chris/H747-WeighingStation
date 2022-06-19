@@ -38,6 +38,7 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
+/* This needs to be the same for both cores */
 typedef struct
 {
   unsigned int bridgeError[4];
@@ -45,6 +46,9 @@ typedef struct
   unsigned int bridgeStale[4];
   unsigned int bridgeBadstatus[4];
   uint32_t bridgeValue[4];
+  uint32_t weight[4];
+	unsigned int setZero[4];
+	unsigned int unsetZero[4];
   uint16_t touchData[4], touchData2[4];
 } CM4_CM7_SharedDataTypeDef;
 

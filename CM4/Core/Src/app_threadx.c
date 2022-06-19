@@ -78,9 +78,6 @@ __attribute__((section(".sram4.sharedData"))) volatile CM4_CM7_SharedDataTypeDef
 unsigned char dbgBuf[256];
 unsigned char input[64];
 unsigned char u2tx[256];
-volatile uint8_t setZero[4];
-volatile uint8_t setZero3;
-volatile uint8_t setZero4;
 CellTypeDef cell[4] = {
 		{&hi2c4, 0x28 << 1, NE4_A_GPIO_Port, NE4_A_Pin},
 		{&hi2c4, 0x36 << 1, NE4_B_GPIO_Port, NE4_B_Pin},
@@ -297,6 +294,7 @@ HAL_StatusTypeDef exit_command_mode(CellTypeDef *cell, uint8_t *dataBuf, const u
 
 void tx_cm4_main_thread_entry(ULONG thread_input)
 {
+	/* TODO - need to zero all together - they shift weight from one to the other depending on the environment of the scale */
 	uint32_t low[4] = { 950, 950, 950, 950 };
 	unsigned int c[4] = { 0, 0, 0, 0 };
 	tx_thread_sleep(TX_TIMER_TICKS_PER_SECOND);
@@ -307,15 +305,22 @@ void tx_cm4_main_thread_entry(ULONG thread_input)
 		printf("WS %8lu",ticks);
 		printf(" | %u %u %u %u",sharedData.bridgeError[0],sharedData.bridgeBadstatus[0],sharedData.bridgeError[1],sharedData.bridgeBadstatus[1]);
 		printf(" %u %u %u %u",sharedData.bridgeError[2],sharedData.bridgeBadstatus[2],sharedData.bridgeError[3],sharedData.bridgeBadstatus[3]);
+		printf(" %u%u%u%u",sharedData.setZero[0],sharedData.setZero[1],sharedData.setZero[2],sharedData.setZero[3]);
+		printf(" %u%u%u%u",sharedData.unsetZero[0],sharedData.unsetZero[1],sharedData.unsetZero[2],sharedData.unsetZero[3]);
 		for (unsigned int i = 0; i < 4; i++)
 		{
 			if (c[i] != sharedData.bridgeCount[i])
 			{
 				uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
-				if (setZero[i])
+				if (sharedData.unsetZero[i])
+				{
+					low[i] = 950;
+					sharedData.unsetZero[i] = 0;
+				}
+				if (sharedData.setZero[i])
 				{
 					low[i] = weight;
-					setZero[i] = 0;
+					sharedData.setZero[i] = 0;
 				}
 				if (weight < low[i])
 					weight = 0;
@@ -330,6 +335,7 @@ void tx_cm4_main_thread_entry(ULONG thread_input)
 				temp -= 500;
 				printf(" %2d.%01d C", (uint16_t)(temp / 10), (uint16_t)(temp % 10));
 				c[i] = sharedData.bridgeCount[i];
+				sharedData.weight[i] = weight;
 			}
 			else
 				printf(" |                ");
