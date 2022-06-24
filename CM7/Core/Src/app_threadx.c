@@ -291,6 +291,20 @@ VOID weight_update()
 	total /= 10;
 	gRawWeight = total;
 	gFineWeight = gRawWeight - gTareWeight;
+	/* determine text color */
+	GX_RESOURCE_ID color = GX_COLOR_ID_TEXT;
+	uint32_t sel = main_window.main_window_numeric_scroll_wheel.gx_scroll_wheel_selected_row;
+	sel += main_window.main_window_numeric_scroll_wheel.gx_numeric_scroll_wheel_start_val;
+	sel *= 10;
+	if (gFineWeight >= sel)
+	{
+		if (gFineWeight >= (sel + 10))
+			color = GX_COLOR_ID_BTN_UPPER;
+		else
+			color = GX_COLOR_ID_BTN_LOWER;
+	}
+	if (main_window.main_window_weight_prompt.gx_prompt_normal_text_color != color)
+		gx_prompt_text_color_set((GX_PROMPT *)&main_window.main_window_weight_prompt, color, color, color);
   gx_numeric_pixelmap_prompt_value_set(&main_window.main_window_weight_prompt, gFineWeight);
 }
 
