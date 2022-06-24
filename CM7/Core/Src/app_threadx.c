@@ -74,7 +74,11 @@ char textBuffer[LINES*COLUMNS];
 UINT lineEnd[LINES];
 UINT curLine;
 ULONG gCounter;
-uint32_t gWeight = 0;
+uint32_t gRawWeight = 0;
+uint32_t gTareWeight = 0;
+uint32_t gFineWeight = 0;
+uint32_t gSumWeight = 0;
+uint32_t gSumCount = 0;
 
 /* USER CODE END PV */
 
@@ -285,8 +289,9 @@ VOID weight_update()
 		total += sharedData.weight[i];
 	}
 	total /= 10;
-	gWeight = total;
-  gx_numeric_pixelmap_prompt_value_set(&main_window.main_window_weight_prompt, total);
+	gRawWeight = total;
+	gFineWeight = gRawWeight - gTareWeight;
+  gx_numeric_pixelmap_prompt_value_set(&main_window.main_window_weight_prompt, gFineWeight);
 }
 
 /*************************************************************************************/
@@ -295,54 +300,70 @@ UINT main_screen_event_handler(GX_WINDOW *window, GX_EVENT *event_ptr)
 	ULONG style;
 	switch (event_ptr->gx_event_type)
 	{
-		case GX_EVENT_SHOW:
-			/* Set current weight. */
+	case GX_EVENT_SHOW:
+		/* Set current weight. */
+		weight_update();
+
+		/* Start a timer to update weight. */
+		gx_system_timer_start(&main_window, CLOCK_TIMER, GX_TICKS_SECOND / 2, GX_TICKS_SECOND / 2);
+		break;
+
+	case GX_EVENT_TIMER:
+		if (event_ptr->gx_event_payload.gx_event_timer_id == CLOCK_TIMER)
+		{
 			weight_update();
+		}
+		break;
 
-			/* Start a timer to update weight. */
-			gx_system_timer_start(&main_window, CLOCK_TIMER, GX_TICKS_SECOND / 2, GX_TICKS_SECOND / 2);
-			break;
+	case (ID_TARE_ICON << 8) | GX_EVENT_CLICKED:
+		style = 0;
+		gx_widget_style_get((GX_WIDGET *)&main_window.main_window_tare_icon, &style);
+		if (style & GX_STYLE_DRAW_SELECTED)
+		{
+			gx_widget_style_remove((GX_WIDGET *)&main_window.main_window_tare_icon, GX_STYLE_DRAW_SELECTED);
+			/* set back in raw mode */
+			/* clear the tare value field */
+			gTareWeight = 0;
+			gx_numeric_prompt_value_set(&main_window.main_window_tare_value, 0);
+		}
+		else
+		{
+			gx_widget_style_add((GX_WIDGET *)&main_window.main_window_tare_icon, GX_STYLE_DRAW_SELECTED);
+			/* use current weight value as tare */
+			/* record current weight to display in the tare value field */
+			gTareWeight = gRawWeight;
+			gx_numeric_prompt_value_set(&main_window.main_window_tare_value, gRawWeight);
+		}
+		break;
 
-		case GX_EVENT_TIMER:
-			if (event_ptr->gx_event_payload.gx_event_timer_id == CLOCK_TIMER)
-			{
-				weight_update();
-			}
-			break;
+	case (ID_ADD_ICON << 8) | GX_EVENT_CLICKED:
+		gSumWeight += gFineWeight;
+		gSumCount += 1;
+		gx_numeric_prompt_value_set(&main_window.main_window_count_value, gSumCount);
+		gx_numeric_prompt_value_set(&main_window.main_window_sum_value, gSumWeight);
+		break;
 
-		case (ID_TARE_ICON << 8) | GX_EVENT_CLICKED:
-			style = 0;
-			gx_widget_style_get((GX_WIDGET *)&main_window.main_window_tare_icon, &style);
-			if (style & GX_STYLE_DRAW_SELECTED)
-			{
-				gx_widget_style_remove((GX_WIDGET *)&main_window.main_window_tare_icon, GX_STYLE_DRAW_SELECTED);
-				/* set back in raw mode */
-				/* clear the tare value field */
-				gx_numeric_prompt_value_set(&main_window.main_window_tare_value, 0);
-				/* set the unsetZero field */
-				sharedData.unsetZero[0] = 1;
-				sharedData.unsetZero[1] = 1;
-				sharedData.unsetZero[2] = 1;
-				sharedData.unsetZero[3] = 1;
-			}
-			else
-			{
-				gx_widget_style_add((GX_WIDGET *)&main_window.main_window_tare_icon, GX_STYLE_DRAW_SELECTED);
-				/* use current weight value as tare */
-				/* record current weight to display in the tare value field */
-				gx_numeric_prompt_value_set(&main_window.main_window_tare_value, gWeight);
-				/* set the setZero field */
-				sharedData.setZero[0] = 1;
-				sharedData.setZero[1] = 1;
-				sharedData.setZero[2] = 1;
-				sharedData.setZero[3] = 1;
-			}
-			break;
+	case (ID_SUB_ICON << 8) | GX_EVENT_CLICKED:
+		if (gSumCount > 0)
+		{
+			gSumWeight -= gFineWeight;
+			gSumCount -= 1;
+			gx_numeric_prompt_value_set(&main_window.main_window_count_value, gSumCount);
+			gx_numeric_prompt_value_set(&main_window.main_window_sum_value, gSumWeight);
+		}
+		break;
+
+	case (ID_ZERO_ICON << 8) | GX_EVENT_CLICKED:
+		gSumWeight = 0;
+		gSumCount = 0;
+		gx_numeric_prompt_value_set(&main_window.main_window_count_value, gSumCount);
+		gx_numeric_prompt_value_set(&main_window.main_window_sum_value, gSumWeight);
+		break;
 
 
-		default:
-			//HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
-			break;
+	default:
+		//HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin);
+		break;
 	}
 	return gx_window_event_process(window, event_ptr);
 }

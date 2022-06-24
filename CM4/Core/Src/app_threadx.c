@@ -51,6 +51,8 @@ typedef struct _cell_t {
 /* fx_sd_thread preemption priority */
 #define DEFAULT_PREEMPTION_THRESHOLD      DEFAULT_THREAD_PRIO
 
+#define CELL_LOW_VALUE                   950
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -294,8 +296,6 @@ HAL_StatusTypeDef exit_command_mode(CellTypeDef *cell, uint8_t *dataBuf, const u
 
 void tx_cm4_main_thread_entry(ULONG thread_input)
 {
-	/* TODO - need to zero all together - they shift weight from one to the other depending on the environment of the scale */
-	uint32_t low[4] = { 950, 950, 950, 950 };
 	unsigned int c[4] = { 0, 0, 0, 0 };
 	tx_thread_sleep(TX_TIMER_TICKS_PER_SECOND);
 	/* Infinite loop */
@@ -305,37 +305,17 @@ void tx_cm4_main_thread_entry(ULONG thread_input)
 		printf("WS %8lu",ticks);
 		printf(" | %u %u %u %u",sharedData.bridgeError[0],sharedData.bridgeBadstatus[0],sharedData.bridgeError[1],sharedData.bridgeBadstatus[1]);
 		printf(" %u %u %u %u",sharedData.bridgeError[2],sharedData.bridgeBadstatus[2],sharedData.bridgeError[3],sharedData.bridgeBadstatus[3]);
-		printf(" %u%u%u%u",sharedData.setZero[0],sharedData.setZero[1],sharedData.setZero[2],sharedData.setZero[3]);
-		printf(" %u%u%u%u",sharedData.unsetZero[0],sharedData.unsetZero[1],sharedData.unsetZero[2],sharedData.unsetZero[3]);
 		for (unsigned int i = 0; i < 4; i++)
 		{
 			if (c[i] != sharedData.bridgeCount[i])
 			{
-				uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
-				if (sharedData.unsetZero[i])
-				{
-					low[i] = 950;
-					sharedData.unsetZero[i] = 0;
-				}
-				if (sharedData.setZero[i])
-				{
-					low[i] = weight;
-					sharedData.setZero[i] = 0;
-				}
-				if (weight < low[i])
-					weight = 0;
-				else
-					weight -= low[i];
-				weight *= 5000;
-				weight /= 14000;
-				printf(" | %2d.%02d kg", (uint16_t)(weight / 100), (uint16_t)(weight % 100));
+				printf(" | %2d.%02d kg", (uint16_t)(sharedData.weight[i] / 100), (uint16_t)(sharedData.weight[i] % 100));
 				uint32_t temp = (sharedData.bridgeValue[i] >> 5) & 0x7ff;
 				temp *= 2000;
 				temp /= 2048; // just a guess at this point...
 				temp -= 500;
 				printf(" %2d.%01d C", (uint16_t)(temp / 10), (uint16_t)(temp % 10));
 				c[i] = sharedData.bridgeCount[i];
-				sharedData.weight[i] = weight;
 			}
 			else
 				printf(" |                ");
@@ -386,6 +366,14 @@ void tx_cm4_i2c1_thread_entry(ULONG thread_input)
 				{
 					sharedData.bridgeValue[i] = (dataBuf[0] << 24) | (dataBuf[1] << 16) | (dataBuf[2] << 8) | dataBuf[3];
 					sharedData.bridgeCount[i] += 1;
+					uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
+					if (weight < CELL_LOW_VALUE)
+						weight = 0;
+					else
+						weight -= CELL_LOW_VALUE;
+					weight *= 5000;
+					weight /= 14000;
+					sharedData.weight[i] = weight;
 				} else if (status == 2)
 					sharedData.bridgeStale[i] += 1;
 				else
@@ -438,6 +426,14 @@ void tx_cm4_i2c4_thread_entry(ULONG thread_input)
 				{
 					sharedData.bridgeValue[i] = (dataBuf[0] << 24) | (dataBuf[1] << 16) | (dataBuf[2] << 8) | dataBuf[3];
 					sharedData.bridgeCount[i] += 1;
+					uint32_t weight = (sharedData.bridgeValue[i] >> 16) & 0x3fff;
+					if (weight < CELL_LOW_VALUE)
+						weight = 0;
+					else
+						weight -= CELL_LOW_VALUE;
+					weight *= 5000;
+					weight /= 14000;
+					sharedData.weight[i] = weight;
 				} else if (status == 2)
 					sharedData.bridgeStale[i] += 1;
 				else
