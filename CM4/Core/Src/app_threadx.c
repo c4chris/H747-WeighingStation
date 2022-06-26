@@ -52,6 +52,8 @@ typedef struct _cell_t {
 #define DEFAULT_PREEMPTION_THRESHOLD      DEFAULT_THREAD_PRIO
 
 #define CELL_LOW_VALUE                   950
+#define CELL_SCALE_VALUE                4536 /* 45359.237 g in 100 lbs */
+#define CELL_SCALE_RANGE               14000
 
 /* USER CODE END PD */
 
@@ -371,8 +373,8 @@ void tx_cm4_i2c1_thread_entry(ULONG thread_input)
 						weight = 0;
 					else
 						weight -= CELL_LOW_VALUE;
-					weight *= 5000;
-					weight /= 14000;
+					weight *= CELL_SCALE_VALUE;
+					weight /= CELL_SCALE_RANGE;
 					sharedData.weight[i] = weight;
 				} else if (status == 2)
 					sharedData.bridgeStale[i] += 1;
@@ -431,8 +433,8 @@ void tx_cm4_i2c4_thread_entry(ULONG thread_input)
 						weight = 0;
 					else
 						weight -= CELL_LOW_VALUE;
-					weight *= 5000;
-					weight /= 14000;
+					weight *= CELL_SCALE_VALUE;
+					weight /= CELL_SCALE_RANGE;
 					sharedData.weight[i] = weight;
 				} else if (status == 2)
 					sharedData.bridgeStale[i] += 1;
